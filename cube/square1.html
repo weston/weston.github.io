@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+	<head>
+	<link rel="stylesheet" type="text/css" href="square1.css"/>
+	<style type="text/css"></style>
+	<title>WestonMizumoto.com</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
+	<center class = "header">Square-1</center>
+	</head>
+	<body>
+		<div id='content'>
+		    <div id='sidebar'>
+		    <center>
+		    <div class="wordSpacing"><a href="home.html">Home</a></div>
+		    <div class="wordSpacing"><a href="algorithms.html">Algorithms</a> </div>
+		    <div class="wordSpacing" id = "selected" ><a href="">Square-1 <a></div>
+		    <div class="wordSpacing"><a href="idea.html">OH-LS Idea <a></div>
+		    </center>
+		    </div>
+		    <div id='main'>
+		   
+		   When I was very new to square-1, I planned to learn to optimally solve all of the possible cube-shape cases. It turns out, however, that the kite/scallop method works just as well as the optimal solution in many cases, and is very easy to learn, so I abandoned my quest to learn the optimal solutions. However, before I had abandoned it, I had started to compile a list of all of the square-1 cubeshape algorithms that is 99.9% obsolete now. The list, however, remains. This is that list.
+<br><br><br><br>
+
+ If you don't know how to solve a Square-1 then this page is
+        not for you. You can learn how to solve one <a href=
+        "http://www.youtube.com/watch?v=-c12Zx_v208">here</a>. If
+        you do know how to solve a Square-1, this page is for
+        getting the puzzle into the cube shape. You can do this
+        intuitively, but some cases are very hard to solve and take
+        a long time without using algorithms. Here you can pick and
+        choose which cases are hard for you to solve intuitively
+        and learn the algorithm for it. Or you can learn them all
+        and be super fast.
+
+        <p>Here is a list of all the possible shapes and their
+        respective names.</p>
+<p>Thanks to Lars Vandenbergh for letting me use his Square-1 images. </p>
+
+        <table border="1" class = "badlyFormattedTable">
+          <tr>
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/square.gif"
+                        hspace="10" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/kite.gif"
+                        hspace="10" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/barrel.gif"
+                        hspace="10" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/shield.gif"
+                        hspace="10" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/leftfist.gif"
+                        hspace="10" />
+              </center>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <center>
+                Square
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Kite
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Barrel
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Shield
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Left Fist
+              </center>
+            </td>
+          </tr>
+        </table>
+        <br />
+
+        <table border="1">
+          <tr>
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/rightfist.gif"
+                        hspace="5" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/leftpawn.gif"
+                        hspace="6" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/rightpawn.gif"
+                        hspace="5" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/mushroom.gif"
+                        hspace="6" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/scallop.gif"
+                        hspace="5" />
+              </center>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <center>
+                Right Fist
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Left Paw
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Right Paw
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Muffin
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Scallop
+              </center>
+            </td>
+          </tr>
+        </table>
+        <br />
+
+        <table border="1">
+          <tr>
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/paired.gif"
+                        hspace="5" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/perpendicular.gif"
+                        hspace="6" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/parallel.gif"
+                        hspace="6" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/star.gif"
+                        hspace="5" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/2-2-2.gif"
+                        hspace="5" />
+              </center>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <center>
+                Pair
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Split Pair
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Parallel
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Star
+              </center>
+            </td>
+
+            <td>
+              <center>
+                2-2-2
+              </center>
+            </td>
+          </tr>
+        </table>
+        <br />
+
+        <table border="1">
+          <tr>
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/3-1-2.gif"
+                        hspace="10" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/3-2-1.gif"
+                        hspace="10" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/3-3.gif"
+                        hspace="10" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/4-4.gif"
+                        hspace="7" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/5-3.gif"
+                        hspace="8" />
+              </center>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <center>
+                3-1-2
+              </center>
+            </td>
+
+            <td>
+              <center>
+                3-2-1
+              </center>
+            </td>
+
+            <td>
+              <center>
+                3-3
+              </center>
+            </td>
+
+            <td>
+              <center>
+                4-4
+              </center>
+            </td>
+
+            <td>
+              <center>
+                5-3
+              </center>
+            </td>
+          </tr>
+        </table>
+        <br />
+
+        <table border="1">
+          <tr>
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/6-2.gif"
+                        hspace="11" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/7-1.gif"
+                        hspace="12" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/8.gif"
+                        hspace="11" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/left4-2.gif"
+                        hspace="12" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/right4-2.gif"
+                        hspace="11" />
+              </center>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <center>
+                6-2
+              </center>
+            </td>
+
+            <td>
+              <center>
+                7-1
+              </center>
+            </td>
+
+            <td>
+              <center>
+                8
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Left 4-2
+              </center>
+            </td>
+
+            <td>
+              <center>
+                RIght 4-2
+              </center>
+            </td>
+          </tr>
+        </table>
+        <br />
+
+        <table border="1">
+          <tr>
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/4-1-1.gif"
+                        hspace="6" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/left5-1.gif"
+                        hspace="8" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/right5-1.gif"
+                        hspace="8" />
+              </center>
+            </td>
+
+            <td>
+              <center>
+                <img src=
+                "http://i173.photobucket.com/albums/w54/badbus/6.gif"
+                        hspace="8" />
+              </center>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <center>
+                4-1-1
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Left 5-1
+              </center>
+            </td>
+
+            <td>
+              <center>
+                Right 5-1
+              </center>
+            </td>
+
+            <td>
+              <center>
+                6
+              </center>
+            </td>
+          </tr>
+        </table>
+        <hr />
+
+        <br />
+        Now for the algorithms. <b>The pictures below each represent the
+        case on the bottom.</b> Click on them to go to a page with
+        the algs for the each possible cube shape on top. You'll
+        have to figure out the AUF yourself until I do it for you.
+        <br />
+        <br />
+        <a href=
+        "http://westonmizumoto.com/square1/star.html"><img src="http://i173.photobucket.com/albums/w54/badbus/star.gif"
+             hspace="15" /></a> <a href=
+             "http://westonmizumoto.com/Square1/Pairededge.html">
+        <img src=
+        "http://i173.photobucket.com/albums/w54/badbus/paired.gif"
+             hspace="15" /></a> <a href=
+             "http://westonmizumoto.com/square1/perpendicularedge.html">
+        <img src=
+        "http://i173.photobucket.com/albums/w54/badbus/perpendicular.gif"
+             hspace="15" /></a> <a href=
+             "http://westonmizumoto.com/square1/paralleledge.html">
+        <img src=
+        "http://i173.photobucket.com/albums/w54/badbus/parallel.gif"
+             hspace="15" /></a>
+
+
+
+
+
+
+
+		    </div>
+
+
+	</body>
+</html>
