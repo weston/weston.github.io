@@ -42,3 +42,7 @@ body{
    padding-left:200px;
    font-size:14px;
  }
+ .titles{
+   position: relative;
+    left: -150px;
+ }
