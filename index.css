@@ -22,13 +22,17 @@ img{
 	font-size:100px;
 }
 .instruction{
-	padding-top:35px;
-	padding-bottom:25px;
-	font-size:30px;
+	padding-top:0px;
+	padding-bottom:15px;
+	font-size:15px;
 	color:grey;
 }
 .sidebar{float: left;
     width: 250px;
     background: #ccc;
     min-height: 100%;
+}
+
+.small_subtitle{
+	font-size:14px;
 }
