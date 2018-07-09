@@ -8,50 +8,98 @@ COMPETITION_ID = 3345
 // Settings (These should not have to change every competition)
 BASE_CUBECOMPS_URL = "http://m.cubecomps.com/competitions/" + COMPETITION_ID + "/"
 RESULT_TABLE_ID = "results-table"
-TOP_RESULTS_COUNT = 16
+RESULTS_PER_PAGE = 8
+REFRESH_SECONDS = 10
 
 
 // "top" mode: print the top 16 results of a round so far
 // "round" mode: scroll through all results of a round
-// "competition" mode: scroll through the latest round for all events
+// The mode can either be "top", "round", or an integer. If it is an integer,
+// displays that many results.
 TOP_MODE = "top"
 ROUND_MODE = "round"
 
 
-function main(){
+function main() {
     var mode = getParameter("mode")
     // see eventNameToID
     var eventID = eventNameToID(getParameter("event"))
     // 1 2 3 4 or 5
     var round = getParameter("round")
-    if (mode == ROUND_MODE) {
+    if (!isNaN(parseInt(mode))) {
+        handleCountMode(eventID, round, parseInt(mode))
+    } else if (mode == ROUND_MODE) {
         handleRoundMode(eventID, round)
-    } else {
+    } else if (mode == TOP_MODE) {
         handleTopMode(eventID, round)
-        // Set timeout
+        setTimeout(function () { location.reload(true); }, 1000 * REFRESH_SECONDS);
     }
 }
 
 function handleTopMode(eventID, round) {
-    var url = createCubecompsRoundResultsURL(eventID, round)
-    var roundData = getResponse(url)
+    var roundData = getResultsResponse(eventID, round)
     if (roundData.length == 0) {
         return
     }
     placeTableHeaders(roundData)
-    for (var i = 0; i < TOP_RESULTS_COUNT; i++) {
+    for (var i = 0; i < roundData.length; i++) {
         var competitorResult = roundData[i]
-        appendResultRow(competitorResult)
+        if (competitorResult === undefined) {
+            return
+        }
+        if (competitorResult["top_position"] == false) {
+            return
+        }
+        appendResultRow(competitorResult, i % 2 == 0)
     }
 }
 
 
-function handleRoundMode(competition_id, event_id, round) {
-    var url = createCubecompsRoundResultsURL(event_id, round)
+function handleCountMode(eventID, round, count) {
+    var roundData = getResultsResponse(eventID, round)
+    if (roundData.length == 0) {
+        return
+    }
+    placeTableHeaders(roundData)
+    for (var i = 0; i < Math.min(roundData.length, count); i++) {
+        var competitorResult = roundData[i]
+        if (competitorResult === undefined) {
+            return
+        }
+        appendResultRow(competitorResult, i % 2 == 0)
+    }
 }
 
 
-function appendResultRow(resultData) {
+function handleRoundMode(eventID, round) {
+    var roundData = getResultsResponse(eventID, round)
+    handleRoundModeHelper(roundData, 0)
+}
+
+
+function handleRoundModeHelper(results, startIndex) {
+    var table = document.getElementById(RESULT_TABLE_ID);
+    table.innerHTML = ""
+    if (startIndex + 1 > results.length) {
+        location.reload(true)
+        return
+    }
+    placeTableHeaders(results)
+    resultsToDisplay = results.slice(startIndex, startIndex + RESULTS_PER_PAGE)
+    for (var i = 0; i < resultsToDisplay.length; i++) {
+        appendResultRow(resultsToDisplay[i], i % 2 == 0)
+    }
+    newStartIndex = startIndex + RESULTS_PER_PAGE
+    setTimeout(
+        function () {
+            handleRoundModeHelper(results, newStartIndex);
+        },
+        1000 * REFRESH_SECONDS
+    );
+}
+
+
+function appendResultRow(resultData, isEven) {
     var table = document.getElementById(RESULT_TABLE_ID);
     var newRow = document.createElement("tr")
     var columns = ["position", "name", "country", "t1", "t2", "t3", "t4", "t5", "mean", "average", "best"]
@@ -64,6 +112,9 @@ function appendResultRow(resultData) {
         var col = document.createElement("td")
         col.innerHTML = resultData[columnString]
         newRow.append(col)
+    }
+    if (isEven) {
+        newRow.className = "even"
     }
     table.appendChild(newRow)
 }
@@ -101,7 +152,8 @@ function createCubecompsRoundResultsURL(eventID, round) {
 }
 
 
-function getResponse(url) {
+function getResultsResponse(eventID, round) {
+    var url = createCubecompsRoundResultsURL(eventID, round)
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", url, false );
     xmlHttp.send(null);
