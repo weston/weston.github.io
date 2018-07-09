@@ -18,6 +18,7 @@ REFRESH_SECONDS = 10
 // displays that many results.
 TOP_MODE = "top"
 ROTATE_MODE = "rotate"
+LUNCH_MODE = "lunch"
 
 
 function main() {
@@ -33,6 +34,8 @@ function main() {
     } else if (mode == TOP_MODE) {
         handleTopMode(eventID, round)
         setTimeout(function () { location.reload(true); }, 1000 * REFRESH_SECONDS);
+    } else if (mode == LUNCH_MODE) {
+        handleLunchMode()
     }
 }
 
@@ -99,6 +102,60 @@ function handleRoundModeHelper(results, startIndex) {
 }
 
 
+handleLunchMode() {
+    var eventsData = queryUrl(BASE_CUBECOMPS_URL + "events.json")
+    handleLunchModeHelper(eventsData, 0)
+    // Rotate through the latest round results for all events
+}
+
+
+function handleLunchModeHelper(eventsData, index) {
+    if (startIndex + 1 > results.length) {
+        location.reload(true)
+        return
+    }
+    var evnt = eventsData[index]
+    var lastFinished = null
+    var currentLive = null
+    var name = evnt["name"]
+    for (var i = 0; i < evnt["rounds"].length; i++) {
+        var round = envt["rounds"][i]
+        if (round["finished"]) {
+            lastFinished = round
+        }
+        if (round["live"]) {
+            displayLunchRound(name, round)
+            // set timeout
+            return
+        }
+    }
+    if (lastFinished != null) {
+        displayLunchRound(name, round)
+        // set timeout
+        return
+    }
+    handleLunchModeHelper(eventsData, index + 1)
+}
+
+
+function displayLunchRound(name, roundData) {
+    /*
+    {
+        "competition_id": "1094",
+        "event_id": "1",
+        "id": "1", This is the round number
+        "name": "First Round",  Put this somewhere on the screen
+        "live": false,
+        "finished": true
+    },
+    */
+    // Make a query to the results api
+    // Display these results
+}
+
+
+
+
 function appendResultRow(resultData, isEven) {
     var table = document.getElementById(RESULT_TABLE_ID);
     var newRow = document.createElement("tr")
@@ -118,6 +175,7 @@ function appendResultRow(resultData, isEven) {
     }
     table.appendChild(newRow)
 }
+
 
 function placeTableHeaders(roundData) {
     // Some events only have 3 solves.
@@ -154,11 +212,15 @@ function createCubecompsRoundResultsURL(eventID, round) {
 
 function getResultsResponse(eventID, round) {
     var url = createCubecompsRoundResultsURL(eventID, round)
+    return queryUrl(url)
+}
+
+function queryUrl(url):
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", url, false );
     xmlHttp.send(null);
     return JSON.parse(xmlHttp.responseText);
-}
+
 
 
 
