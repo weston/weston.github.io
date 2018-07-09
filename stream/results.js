@@ -17,7 +17,7 @@ REFRESH_SECONDS = 10
 // The mode can either be "top", "round", or an integer. If it is an integer,
 // displays that many results.
 TOP_MODE = "top"
-ROUND_MODE = "round"
+ROTATE_MODE = "rotate"
 
 
 function main() {
@@ -28,8 +28,8 @@ function main() {
     var round = getParameter("round")
     if (!isNaN(parseInt(mode))) {
         handleCountMode(eventID, round, parseInt(mode))
-    } else if (mode == ROUND_MODE) {
-        handleRoundMode(eventID, round)
+    } else if (mode == ROTATE_MODE) {
+        handleRotateMode(eventID, round)
     } else if (mode == TOP_MODE) {
         handleTopMode(eventID, round)
         setTimeout(function () { location.reload(true); }, 1000 * REFRESH_SECONDS);
@@ -71,7 +71,7 @@ function handleCountMode(eventID, round, count) {
 }
 
 
-function handleRoundMode(eventID, round) {
+function handleRotateMode(eventID, round) {
     var roundData = getResultsResponse(eventID, round)
     handleRoundModeHelper(roundData, 0)
 }
