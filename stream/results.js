@@ -102,7 +102,7 @@ function handleRoundModeHelper(results, startIndex) {
 }
 
 
-handleLunchMode() {
+function handleLunchMode() {
     var eventsData = queryUrl(BASE_CUBECOMPS_URL + "events.json")
     handleLunchModeHelper(eventsData, 0)
     // Rotate through the latest round results for all events
