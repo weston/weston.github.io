@@ -215,11 +215,12 @@ function getResultsResponse(eventID, round) {
     return queryUrl(url)
 }
 
-function queryUrl(url):
+function queryUrl(url) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", url, false );
     xmlHttp.send(null);
     return JSON.parse(xmlHttp.responseText);
+}
 
 
 
