@@ -277,7 +277,7 @@ function prettyEvent(name) {
     if (name == "clock") return "Clock"
     if (name == "mega") return "Megaminx"
     if (name == "pyra") return "Pyraminx"
-    if (name == "squan") return "Square-1
+    if (name == "squan") return "Square-1"
     if (name == "oh") return "3x3 One Handed"
     if (name == "feet") return "3x3 With Feet"
     if (name == "fmc") return "FMC"
