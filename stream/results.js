@@ -2,7 +2,7 @@
 // You can get the COMPETITION_ID by looking at the cid url param
 // in cubecomps.
 COMPETITION_NAME = "WCCT LA"
-COMPETITION_ID = 3345
+COMPETITION_ID = 3273
 
 
 // Settings (These should not have to change every competition)
@@ -10,6 +10,7 @@ BASE_CUBECOMPS_URL = "http://m.cubecomps.com/competitions/" + COMPETITION_ID + "
 RESULT_TABLE_ID = "results-table"
 RESULTS_PER_PAGE = 8
 REFRESH_SECONDS = 10
+TITLE_ID = "title"
 
 
 // "top" mode: print the top 16 results of a round so far
@@ -20,13 +21,19 @@ TOP_MODE = "top"
 ROTATE_MODE = "rotate"
 LUNCH_MODE = "lunch"
 
+function updateTitle() {
+    var title = document.getElementById(TITLE_ID);
+		title.innerHTML = COMPETITION_NAME + " - " + getParameter("event")
+			+ " Round " + getParameter("round");
+}
 
 function main() {
     var mode = getParameter("mode")
     // see eventNameToID
     var eventID = eventNameToID(getParameter("event"))
     // 1 2 3 4 or 5
-    var round = getParameter("round")
+    var round = getParameter("round");
+		updateTitle();
     if (!isNaN(parseInt(mode))) {
         handleCountMode(eventID, round, parseInt(mode))
     } else if (mode == ROTATE_MODE) {
