@@ -23,8 +23,7 @@ LUNCH_MODE = "lunch"
 
 function updateTitle() {
     var title = document.getElementById(TITLE_ID);
-		title.innerHTML = COMPETITION_NAME + " - " + getParameter("event")
-			+ " Round " + getParameter("round");
+    title.innerHTML = COMPETITION_NAME + " - " + getParameter("event") + " Round " + getParameter("round");
 }
 
 function main() {
@@ -33,7 +32,7 @@ function main() {
     var eventID = eventNameToID(getParameter("event"))
     // 1 2 3 4 or 5
     var round = getParameter("round");
-		updateTitle();
+    updateTitle();
     if (!isNaN(parseInt(mode))) {
         handleCountMode(eventID, round, parseInt(mode))
     } else if (mode == ROTATE_MODE) {
