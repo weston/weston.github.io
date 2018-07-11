@@ -3,7 +3,6 @@
 // in cubecomps.
 COMPETITION_NAME = "WCCT LA"
 COMPETITION_ID = 3273
-COMPETITION_ID = 3337
 
 
 // Settings (These should not have to change every competition)
