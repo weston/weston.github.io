@@ -59,6 +59,12 @@ body {
   color: #444;
   background: #000;
 }
+.title {
+  text-align: center;
+	font-weight: bold;
+	font-size: 2em;
+	color: #FFFFFF;
+}
 
 h1 {
   font-weight: normal;
