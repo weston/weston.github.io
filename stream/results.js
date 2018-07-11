@@ -23,7 +23,7 @@ LUNCH_MODE = "lunch"
 
 function updateTitle() {
     var title = document.getElementById(TITLE_ID);
-    title.innerHTML = COMPETITION_NAME + " - " + getParameter("event") + " Round " + getParameter("round");
+    title.innerHTML = COMPETITION_NAME + " - " + prettyEvent(getParameter("event")) + " Round " + getParameter("round");
 }
 
 function main() {
@@ -264,4 +264,27 @@ function eventNameToID(name) {
     if (name == "skweb") return 20
     console.log("COULD NOT IDENTIFY EVENT STRING")
     return null
+}
+
+function prettyEvent(name) {
+    name = name.toLowerCase()
+    if (name == "333") return "3x3"
+    if (name == "222") return "2x2"
+    if (name == "444") return "4x4"
+    if (name == "555") return "5x5"
+    if (name == "666") return "6x6"
+    if (name == "777") return "7x7"
+    if (name == "clock") return "Clock"
+    if (name == "mega") return "Megaminx"
+    if (name == "pyra") return "Pyraminx"
+    if (name == "squan") return "Square-1
+    if (name == "oh") return "3x3 One Handed"
+    if (name == "feet") return "3x3 With Feet"
+    if (name == "fmc") return "FMC"
+    if (name == "bld" || name == "3bld") return "BLD"
+    if (name == "4bld") return "4BLD"
+    if (name == "5bld") return "5BLD"
+    if (name == "mbld") return "MBLD"
+    if (name == "skewb") return "Skewb"
+    return name
 }
