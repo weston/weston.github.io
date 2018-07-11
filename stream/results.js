@@ -2,7 +2,7 @@
 // You can get the COMPETITION_ID by looking at the cid url param
 // in cubecomps.
 COMPETITION_NAME = "WCCT LA"
-COMPETITION_ID = 3273
+COMPETITION_ID = 3335
 
 
 // Settings (These should not have to change every competition)
