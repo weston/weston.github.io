@@ -189,6 +189,10 @@ function appendResultRow(resultData, isEven) {
             continue
         }
         var col = document.createElement("td")
+        if (columnString == "average"
+            || columnString == "mean") {
+          col.className = "average"; 
+        }
         col.innerHTML = resultData[columnString]
         newRow.append(col)
     }
@@ -215,6 +219,10 @@ function placeTableHeaders(roundData) {
     for (var i = 0; i < headers.length; i++) {
         header = headers[i]
         var column = document.createElement("td")
+        if (header == "Average"
+            || header == "Mean") {
+          column.className = "average"; 
+        }
         column.innerHTML = header
         row.appendChild(column)
     }
