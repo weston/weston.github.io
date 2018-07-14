@@ -1,8 +1,8 @@
 // Parameters. These should change every competition.
 // You can get the COMPETITION_ID by looking at the cid url param
 // in cubecomps.
-COMPETITION_NAME = "WCCT LA"
-COMPETITION_ID = 3335
+COMPETITION_NAME = "WCCT Fresno"
+COMPETITION_ID = 3166
 
 
 // Settings (These should not have to change every competition)
