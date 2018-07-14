@@ -21,9 +21,25 @@ TOP_MODE = "top"
 ROTATE_MODE = "rotate"
 LUNCH_MODE = "lunch"
 
-function updateTitle() {
+function updateTitle(eventID, round) {
+    eventData = queryUrl(BASE_CUBECOMPS_URL + "events.json")
+    console.log(eventData);
+
+    var final_round = false;
+    for (var i = 0; i < eventData.length; i++) {
+      if (eventData[i]["rounds"][0]["event_id"] == eventID
+          && eventData[i]["rounds"].length == round) {
+        final_round = true;
+        break;
+      }
+    }
     var title = document.getElementById(TITLE_ID);
-    title.innerHTML = COMPETITION_NAME + " - " + prettyEvent(getParameter("event")) + " Round " + getParameter("round");
+    title.innerHTML = COMPETITION_NAME + " - " + getParameter("event")
+    if (final_round) {
+      title.innerHTML += " Final";
+		} else {
+      title.innerHTML += " Round " + round;
+    }
 }
 
 function main() {
@@ -32,7 +48,7 @@ function main() {
     var eventID = eventNameToID(getParameter("event"))
     // 1 2 3 4 or 5
     var round = getParameter("round");
-    updateTitle();
+    updateTitle(eventID, round);
     if (!isNaN(parseInt(mode))) {
         handleCountMode(eventID, round, parseInt(mode))
     } else if (mode == ROTATE_MODE) {
@@ -173,6 +189,10 @@ function appendResultRow(resultData, isEven) {
             continue
         }
         var col = document.createElement("td")
+        if (columnString == "average"
+            || columnString == "mean") {
+          col.className = "average"; 
+        }
         col.innerHTML = resultData[columnString]
         newRow.append(col)
     }
@@ -199,6 +219,10 @@ function placeTableHeaders(roundData) {
     for (var i = 0; i < headers.length; i++) {
         header = headers[i]
         var column = document.createElement("td")
+        if (header == "Average"
+            || header == "Mean") {
+          column.className = "average"; 
+        }
         column.innerHTML = header
         row.appendChild(column)
     }

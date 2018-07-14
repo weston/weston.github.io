@@ -89,6 +89,11 @@ h1 {
   border-left: 10px solid #24394E;
   border-right: 10px solid #24394E;
 }
+.rwd-table td.average {
+  font-weight: bold;
+  border-left: 5px solid #000;
+  border-right: 5px solid #000;
+}
 .rwd-table th, .rwd-table td {
   margin: .5em 1em;
 }
