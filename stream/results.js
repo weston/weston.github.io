@@ -34,7 +34,7 @@ function updateTitle(eventID, round) {
       }
     }
     var title = document.getElementById(TITLE_ID);
-    title.innerHTML = COMPETITION_NAME + " - " + getParameter("event")
+    title.innerHTML = COMPETITION_NAME + " - " + prettyEvent(getParameter("event"))
     if (final_round) {
       title.innerHTML += " Final";
 		} else {
@@ -191,7 +191,7 @@ function appendResultRow(resultData, isEven) {
         var col = document.createElement("td")
         if (columnString == "average"
             || columnString == "mean") {
-          col.className = "average"; 
+          col.className = "average";
         }
         col.innerHTML = resultData[columnString]
         newRow.append(col)
@@ -221,7 +221,7 @@ function placeTableHeaders(roundData) {
         var column = document.createElement("td")
         if (header == "Average"
             || header == "Mean") {
-          column.className = "average"; 
+          column.className = "average";
         }
         column.innerHTML = header
         row.appendChild(column)
