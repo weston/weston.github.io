@@ -153,8 +153,10 @@ function displayLunchRounds(eventList, curEventIndex, timeout) {
     }
     if (roundToDisplay != null) {
         displayLunchRound(name, roundToDisplay)
+        setTimeout(function() { displayLunchRounds(eventList, curEventIndex + 1, timeout)}, timeout)
+        return
     }
-    setTimeout(function() { displayLunchRounds(eventList, curEventIndex + 1, timeout)}, timeout)
+    displayLunchRounds(eventList, curEventIndex + 1, timeout)
 }
 
 
