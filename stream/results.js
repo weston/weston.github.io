@@ -1,12 +1,9 @@
 // Parameters. These should change every competition.
 // You can get the COMPETITION_ID by looking at the cid url param
 // in cubecomps.
-COMPETITION_NAME = "WCCT RENO"
-COMPETITION_ID = 3356
-
+COMPETITION_NAME = "WCCT Snoco"
 
 // Settings (These should not have to change every competition)
-BASE_CUBECOMPS_URL = "http://m.cubecomps.com/competitions/" + COMPETITION_ID + "/"
 RESULT_TABLE_ID = "results-table"
 RESULTS_PER_PAGE = 8
 REFRESH_SECONDS = 10
@@ -21,10 +18,9 @@ TOP_MODE = "top"
 ROTATE_MODE = "rotate"
 LUNCH_MODE = "lunch"
 
-function updateTitle(eventID, round) {
+function updateTitle(eventName, round) {
+    eventID = eventNameToID(eventName)
     eventData = queryUrl(BASE_CUBECOMPS_URL + "events.json")
-    console.log(eventData);
-
     var final_round = false;
     for (var i = 0; i < eventData.length; i++) {
       if (eventData[i]["rounds"][0]["event_id"] == eventID
@@ -34,7 +30,7 @@ function updateTitle(eventID, round) {
       }
     }
     var title = document.getElementById(TITLE_ID);
-    title.innerHTML = COMPETITION_NAME + " - " + prettyEvent(getParameter("event"))
+    title.innerHTML = COMPETITION_NAME + " - " + prettyEvent(eventName)
     if (final_round) {
       title.innerHTML += " Final";
 		} else {
@@ -43,12 +39,20 @@ function updateTitle(eventID, round) {
 }
 
 function main() {
+    COMPETITION_ID = getParameter("competition_id")
+    BASE_CUBECOMPS_URL = "http://m.cubecomps.com/competitions/" + COMPETITION_ID + "/"
     var mode = getParameter("mode")
+    if (mode == LUNCH_MODE) {
+        handleLunchMode()
+        return
+    }
+
     // see eventNameToID
-    var eventID = eventNameToID(getParameter("event"))
+    var eventName = getParameter("event")
+    var eventID = eventNameToID(eventName)
     // 1 2 3 4 or 5
     var round = getParameter("round");
-    updateTitle(eventID, round);
+    updateTitle(eventName, round);
     if (!isNaN(parseInt(mode))) {
         handleCountMode(eventID, round, parseInt(mode))
     } else if (mode == ROTATE_MODE) {
@@ -56,8 +60,6 @@ function main() {
     } else if (mode == TOP_MODE) {
         handleTopMode(eventID, round)
         setTimeout(function () { location.reload(true); }, 1000 * REFRESH_SECONDS);
-    } else if (mode == LUNCH_MODE) {
-        handleLunchMode()
     }
 }
 
@@ -125,42 +127,43 @@ function handleRoundModeHelper(results, startIndex) {
 
 
 function handleLunchMode() {
+    var MS_PER_SCREEN = 1000 * 20
     var eventsData = queryUrl(BASE_CUBECOMPS_URL + "events.json")
-    handleLunchModeHelper(eventsData, 0)
-    // Rotate through the latest round results for all events
+    displayLunchRounds(eventsData, 0, MS_PER_SCREEN)
 }
 
 
-function handleLunchModeHelper(eventsData, index) {
-    if (startIndex + 1 > results.length) {
+function displayLunchRounds(eventList, curEventIndex, timeout) {
+    if (curEventIndex + 1 > eventList.length) {
         location.reload(true)
         return
     }
-    var evnt = eventsData[index]
-    var lastFinished = null
-    var currentLive = null
+    var evnt = eventList[curEventIndex]
+    var roundToDisplay = null
     var name = evnt["name"]
-    for (var i = 0; i < evnt["rounds"].length; i++) {
-        var round = envt["rounds"][i]
+    for (var h = 0; h < evnt["rounds"].length; h++) {
+        var round = evnt["rounds"][h]
         if (round["finished"]) {
-            lastFinished = round
+            roundToDisplay = round
         }
         if (round["live"]) {
-            displayLunchRound(name, round)
-            // set timeout
-            return
+            roundToDisplay = round
+            break
         }
     }
-    if (lastFinished != null) {
-        displayLunchRound(name, round)
-        // set timeout
-        return
+    if (roundToDisplay != null) {
+        displayLunchRound(name, roundToDisplay)
     }
-    handleLunchModeHelper(eventsData, index + 1)
+    setTimeout(function() { displayLunchRounds(eventList, curEventIndex + 1, timeout)}, timeout)
 }
 
 
-function displayLunchRound(name, roundData) {
+function displayLunchRound(name, roundData){
+    var eventID = roundData["event_id"]
+    var round = roundData["id"]
+    updateTitle(name, round);
+    clearResultsTable()
+    handleCountMode(eventID, round, 12)
     /*
     {
         "competition_id": "1094",
@@ -171,11 +174,12 @@ function displayLunchRound(name, roundData) {
         "finished": true
     },
     */
-    // Make a query to the results api
-    // Display these results
 }
 
 
+function clearResultsTable() {
+    document.getElementById(RESULT_TABLE_ID).innerHTML = ""
+}
 
 
 function appendResultRow(resultData, isEven) {
@@ -183,7 +187,6 @@ function appendResultRow(resultData, isEven) {
     var newRow = document.createElement("tr")
     var columns = ["position", "name", "country", "t1", "t2", "t3", "t4", "t5", "mean", "average", "best"]
     for (var i = 0; i < columns.length; i++) {
-        console.log(resultData)
         columnString = columns[i]
         if (!(columnString in resultData)) {
             continue
@@ -291,24 +294,24 @@ function eventNameToID(name) {
 }
 
 function prettyEvent(name) {
-    name = name.toLowerCase()
-    if (name == "333") return "3x3"
-    if (name == "222") return "2x2"
-    if (name == "444") return "4x4"
-    if (name == "555") return "5x5"
-    if (name == "666") return "6x6"
-    if (name == "777") return "7x7"
-    if (name == "clock") return "Clock"
-    if (name == "mega") return "Megaminx"
-    if (name == "pyra") return "Pyraminx"
-    if (name == "squan") return "Square-1"
-    if (name == "oh") return "3x3 One Handed"
-    if (name == "feet") return "3x3 With Feet"
-    if (name == "fmc") return "FMC"
-    if (name == "bld" || name == "3bld") return "BLD"
-    if (name == "4bld") return "4BLD"
-    if (name == "5bld") return "5BLD"
-    if (name == "mbld") return "MBLD"
-    if (name == "skewb") return "Skewb"
+    lower_name = name.toLowerCase()
+    if (lower_name == "333") return "3x3"
+    if (lower_name == "222") return "2x2"
+    if (lower_name == "444") return "4x4"
+    if (lower_name == "555") return "5x5"
+    if (lower_name == "666") return "6x6"
+    if (lower_name == "777") return "7x7"
+    if (lower_name == "clock") return "Clock"
+    if (lower_name == "mega") return "Megaminx"
+    if (lower_name == "pyra") return "Pyraminx"
+    if (lower_name == "squan") return "Square-1"
+    if (lower_name == "oh") return "3x3 One Handed"
+    if (lower_name == "feet") return "3x3 With Feet"
+    if (lower_name == "fmc") return "FMC"
+    if (lower_name == "bld" || name == "3bld") return "BLD"
+    if (lower_name == "4bld") return "4BLD"
+    if (lower_name == "5bld") return "5BLD"
+    if (lower_name == "mbld") return "MBLD"
+    if (lower_name == "skewb") return "Skewb"
     return name
 }
