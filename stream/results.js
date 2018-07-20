@@ -165,7 +165,7 @@ function displayLunchRound(name, roundData){
     var round = roundData["id"]
     updateTitle(name, round);
     clearResultsTable()
-    handleCountMode(eventID, round, 12)
+    handleCountMode(eventID, round, 8)
     /*
     {
         "competition_id": "1094",
