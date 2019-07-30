@@ -12,6 +12,10 @@ RESULTS_PER_PAGE = 8
 REFRESH_SECONDS = 10
 TITLE_ID = "title"
 
+ROUND_START_INDEX = 0
+LUNCH_MODE_TIMEOUT = 1000 * 5
+LUNCH_MODE_EVENT_INDEX = 0
+
 
 // "top" mode: print the top 16 results of a round so far
 // "round" mode: scroll through all results of a round
@@ -58,7 +62,6 @@ function main() {
     // 1 2 3 4 or 5
     var round = getParameter("round");
     updateTitle(eventName, round);
-    return
     if (!isNaN(parseInt(mode))) {
         handleCountMode(eventID, round, parseInt(mode))
     } else if (mode == ROTATE_MODE) {
@@ -70,62 +73,66 @@ function main() {
 }
 
 function handleTopMode(eventID, round) {
-    var roundData = getResultsResponse(eventID, round)
-    if (roundData.length == 0) {
-        return
-    }
-    placeTableHeaders(roundData)
-    for (var i = 0; i < roundData.length; i++) {
-        var competitorResult = roundData[i]
-        if (competitorResult === undefined) {
+    var cb = function(roundData) {
+        if (roundData.length == 0) {
             return
         }
-        if (competitorResult["top_position"] == false) {
-            return
+        placeTableHeaders(roundData)
+        for (var i = 0; i < roundData.length; i++) {
+            var competitorResult = roundData[i]
+            if (competitorResult === undefined) {
+                return
+            }
+            if (competitorResult["top_position"] == false) {
+                return
+            }
+            appendResultRow(competitorResult, i % 2 == 0)
         }
-        appendResultRow(competitorResult, i % 2 == 0)
     }
+    getResultsResponseWithCallback(eventID, round, cb)
 }
 
 
 function handleCountMode(eventID, round, count) {
-    var roundData = getResultsResponse(eventID, round)
-    if (roundData.length == 0) {
-        return
-    }
-    placeTableHeaders(roundData)
-    for (var i = 0; i < Math.min(roundData.length, count); i++) {
-        var competitorResult = roundData[i]
-        if (competitorResult === undefined) {
+    var cb = function(roundData) {
+        if (roundData.length == 0) {
             return
         }
-        appendResultRow(competitorResult, i % 2 == 0)
+        placeTableHeaders(roundData)
+        for (var i = 0; i < Math.min(roundData.length, count); i++) {
+            var competitorResult = roundData[i]
+            if (competitorResult === undefined) {
+                return
+            }
+            appendResultRow(competitorResult, i % 2 == 0)
+        }
     }
+    getResultsResponseWithCallback(eventID, round, cb)
 }
 
 
 function handleRotateMode(eventID, round) {
-    var roundData = getResultsResponse(eventID, round)
-    handleRoundModeHelper(roundData, 0)
+    getResultsResponseWithCallback(eventID, round, handleRoundModeHelper)
 }
 
 
-function handleRoundModeHelper(results, startIndex) {
+function handleRoundModeHelper(results) {
     var table = document.getElementById(RESULT_TABLE_ID);
     table.innerHTML = ""
-    if (startIndex + 1 > results.length) {
+    if (ROUND_START_INDEX + 1 > results.length) {
         location.reload(true)
         return
     }
     placeTableHeaders(results)
-    resultsToDisplay = results.slice(startIndex, startIndex + RESULTS_PER_PAGE)
+    resultsToDisplay = results.slice(
+        ROUND_START_INDEX, ROUND_START_INDEX + RESULTS_PER_PAGE)
     for (var i = 0; i < resultsToDisplay.length; i++) {
         appendResultRow(resultsToDisplay[i], i % 2 == 0)
     }
-    newStartIndex = startIndex + RESULTS_PER_PAGE
+    ROUND_START_INDEX = ROUND_START_INDEX + RESULTS_PER_PAGE
     setTimeout(
         function () {
-            handleRoundModeHelper(results, newStartIndex);
+            handleRoundModeHelper(results);
         },
         1000 * REFRESH_SECONDS
     );
@@ -133,18 +140,17 @@ function handleRoundModeHelper(results, startIndex) {
 
 
 function handleLunchMode() {
-    var MS_PER_SCREEN = 1000 * 20
-    var eventsData = queryUrl(BASE_CUBECOMPS_URL + "events.json")
-    displayLunchRounds(eventsData, 0, MS_PER_SCREEN)
+    queryUrlWithCallback(BASE_CUBECOMPS_URL + "events.json", displayLunchRounds)
 }
 
 
-function displayLunchRounds(eventList, curEventIndex, timeout) {
-    if (curEventIndex + 1 > eventList.length) {
+function displayLunchRounds(eventList) {
+    curEventIndex = LUNCH_MODE_EVENT_INDEX
+    if (LUNCH_MODE_EVENT_INDEX + 1 > eventList.length) {
         location.reload(true)
         return
     }
-    var evnt = eventList[curEventIndex]
+    var evnt = eventList[LUNCH_MODE_EVENT_INDEX]
     var roundToDisplay = null
     var name = evnt["name"]
     for (var h = 0; h < evnt["rounds"].length; h++) {
@@ -157,12 +163,14 @@ function displayLunchRounds(eventList, curEventIndex, timeout) {
             break
         }
     }
+    LUNCH_MODE_EVENT_INDEX += 1
     if (roundToDisplay != null) {
         displayLunchRound(name, roundToDisplay)
-        setTimeout(function() { displayLunchRounds(eventList, curEventIndex + 1, timeout)}, timeout)
+        setTimeout(function() {
+            displayLunchRounds(eventList)}, LUNCH_MODE_TIMEOUT)
         return
     }
-    displayLunchRounds(eventList, curEventIndex + 1, timeout)
+    displayLunchRounds(eventList)
 }
 
 
@@ -252,6 +260,11 @@ function createCubecompsRoundResultsURL(eventID, round) {
 function getResultsResponse(eventID, round) {
     var url = createCubecompsRoundResultsURL(eventID, round)
     return queryUrl(url)
+}
+
+function getResultsResponseWithCallback(eventID, round, cb){
+    var url = createCubecompsRoundResultsURL(eventID, round)
+    queryUrlWithCallback(url, cb)
 }
 
 function queryUrl(url) {
