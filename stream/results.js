@@ -1,7 +1,10 @@
+// Example request:
+// /stream/results.html?competition_id=4547&event=333&round=1&mode=3
+//
 // Parameters. These should change every competition.
 // You can get the COMPETITION_ID by looking at the cid url param
 // in cubecomps.
-COMPETITION_NAME = "Western Championships 2019"
+COMPETITION_NAME = "US Nationals 2019"
 
 // Settings (These should not have to change every competition)
 RESULT_TABLE_ID = "results-table"
@@ -59,7 +62,7 @@ function main() {
         handleRotateMode(eventID, round)
     } else if (mode == TOP_MODE) {
         handleTopMode(eventID, round)
-        setTimeout(function () { location.reload(true); }, 1000 * REFRESH_SECONDS);
+        //setTimeout(function () { location.reload(true); }, 1000 * REFRESH_SECONDS);
     }
 }
 
