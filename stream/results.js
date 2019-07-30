@@ -23,22 +23,24 @@ LUNCH_MODE = "lunch"
 
 function updateTitle(eventName, round) {
     eventID = eventNameToID(eventName)
-    eventData = queryUrl(BASE_CUBECOMPS_URL + "events.json")
-    var final_round = false;
-    for (var i = 0; i < eventData.length; i++) {
-      if (eventData[i]["rounds"][0]["event_id"] == eventID
-          && eventData[i]["rounds"].length == round) {
-        final_round = true;
-        break;
-      }
-    }
-    var title = document.getElementById(TITLE_ID);
-    title.innerHTML = COMPETITION_NAME + " - " + prettyEvent(eventName)
-    if (final_round) {
-      title.innerHTML += " Final";
-		} else {
-      title.innerHTML += " Round " + round;
-    }
+    var cb = function (eventData) {
+        var final_round = false;
+        for (var i = 0; i < eventData.length; i++) {
+          if (eventData[i]["rounds"][0]["event_id"] == eventID
+              && eventData[i]["rounds"].length == round) {
+            final_round = true;
+            break;
+          }
+        }
+        var title = document.getElementById(TITLE_ID);
+        title.innerHTML = COMPETITION_NAME + " - " + prettyEvent(eventName)
+        if (final_round) {
+          title.innerHTML += " Final";
+            } else {
+          title.innerHTML += " Round " + round;
+        }
+    };
+    queryUrlWithCallback(BASE_CUBECOMPS_URL + "events.json", cb)
 }
 
 function main() {
@@ -56,13 +58,14 @@ function main() {
     // 1 2 3 4 or 5
     var round = getParameter("round");
     updateTitle(eventName, round);
+    return
     if (!isNaN(parseInt(mode))) {
         handleCountMode(eventID, round, parseInt(mode))
     } else if (mode == ROTATE_MODE) {
         handleRotateMode(eventID, round)
     } else if (mode == TOP_MODE) {
         handleTopMode(eventID, round)
-        //setTimeout(function () { location.reload(true); }, 1000 * REFRESH_SECONDS);
+        setTimeout(function () { location.reload(true); }, 1000 * REFRESH_SECONDS);
     }
 }
 
@@ -237,8 +240,6 @@ function placeTableHeaders(roundData) {
     table.appendChild(row)
 }
 
-
-
 function createCubecompsRoundResultsURL(eventID, round) {
     var url = BASE_CUBECOMPS_URL
     url += "events/" + eventID
@@ -260,8 +261,16 @@ function queryUrl(url) {
     return JSON.parse(xmlHttp.responseText);
 }
 
-
-
+function queryUrlWithCallback(url, callback) {
+    var xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function() {
+        if (this.readyState === this.DONE) {
+            callback(JSON.parse(this.responseText))
+        }
+    }
+    xhr.open("GET", url)
+    xhr.send()
+}
 
 function getParameter(name) {
     url = window.location.href;
