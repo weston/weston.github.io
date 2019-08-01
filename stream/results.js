@@ -208,6 +208,7 @@ function appendResultRow(resultData, isEven) {
             continue
         }
         var col = document.createElement("td")
+        col.style="border: 1px solid #00ccff"
         if (columnString == "average"
             || columnString == "mean") {
           col.className = "average";
