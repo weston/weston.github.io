@@ -8,7 +8,7 @@ COMPETITION_NAME = "Cubing USA Nationals 2019"
 
 // Settings (These should not have to change every competition)
 RESULT_TABLE_ID = "results-table"
-RESULTS_PER_PAGE = 8
+RESULTS_PER_PAGE = 6
 REFRESH_SECONDS = 10
 TITLE_ID = "title"
 
