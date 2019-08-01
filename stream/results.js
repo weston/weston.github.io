@@ -4,7 +4,7 @@
 // Parameters. These should change every competition.
 // You can get the COMPETITION_ID by looking at the cid url param
 // in cubecomps.
-COMPETITION_NAME = "US Nationals 2019"
+COMPETITION_NAME = "Cubing USA Nationals 2019"
 
 // Settings (These should not have to change every competition)
 RESULT_TABLE_ID = "results-table"
