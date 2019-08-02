@@ -209,7 +209,11 @@ function appendResultRow(resultData, isEven) {
             || columnString == "mean") {
           col.className = "average";
         }
-        col.innerHTML = resultData[columnString]
+        payload = resultData[columnString]
+        if (payload == "United States"){
+          payload = "U.S."
+        }
+        col.innerHTML = payload
         newRow.append(col)
     }
     if (isEven) {
