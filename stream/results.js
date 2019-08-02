@@ -8,7 +8,7 @@ COMPETITION_NAME = "Cubing USA Nationals 2019"
 
 // Settings (These should not have to change every competition)
 RESULT_TABLE_ID = "results-table"
-RESULTS_PER_PAGE = 6
+RESULTS_PER_PAGE = 8
 REFRESH_SECONDS = 10
 TITLE_ID = "title"
 
@@ -26,23 +26,19 @@ ROTATE_MODE = "rotate"
 LUNCH_MODE = "lunch"
 
 function updateTitle(eventName, round) {
-    eventID = eventNameToID(eventName)
+    console.log(eventName)
+    console.log(round)
     var cb = function (eventData) {
-        var final_round = false;
+        roundDescription = ""
         for (var i = 0; i < eventData.length; i++) {
-          if (eventData[i]["rounds"][0]["event_id"] == eventID
-              && eventData[i]["rounds"].length == round) {
-            final_round = true;
-            break;
+          if (eventData[i]["name"] == prettyEvent(eventName)) {
+            roundDescription = eventData[i]["rounds"][parseInt(round) - 1]["name"]
+            break
           }
         }
         var title = document.getElementById(TITLE_ID);
         title.innerHTML = COMPETITION_NAME + " - " + prettyEvent(eventName)
-        if (final_round) {
-          title.innerHTML += " Final";
-            } else {
-          title.innerHTML += " Round " + round;
-        }
+        title.innerHTML += " " + roundDescription
     };
     queryUrlWithCallback(BASE_CUBECOMPS_URL + "events.json", cb)
 }
@@ -323,23 +319,23 @@ function eventNameToID(name) {
 
 function prettyEvent(name) {
     lower_name = name.toLowerCase()
-    if (lower_name == "333") return "3x3"
-    if (lower_name == "222") return "2x2"
-    if (lower_name == "444") return "4x4"
-    if (lower_name == "555") return "5x5"
-    if (lower_name == "666") return "6x6"
-    if (lower_name == "777") return "7x7"
+    if (lower_name == "333") return "3x3x3 Cube"
+    if (lower_name == "222") return "2x2x2 Cube"
+    if (lower_name == "444") return "4x4x4 Cube"
+    if (lower_name == "555") return "5x5x5 Cube"
+    if (lower_name == "666") return "6x6x6 Cube"
+    if (lower_name == "777") return "7x7x7 Cube"
     if (lower_name == "clock") return "Clock"
     if (lower_name == "mega") return "Megaminx"
     if (lower_name == "pyra") return "Pyraminx"
     if (lower_name == "squan") return "Square-1"
-    if (lower_name == "oh") return "3x3 One Handed"
-    if (lower_name == "feet") return "3x3 With Feet"
-    if (lower_name == "fmc") return "FMC"
-    if (lower_name == "bld" || name == "3bld") return "BLD"
-    if (lower_name == "4bld") return "4BLD"
-    if (lower_name == "5bld") return "5BLD"
-    if (lower_name == "mbld") return "MBLD"
-    if (lower_name == "skewb") return "Skewb"
+    if (lower_name == "oh") return "3x3x3 One-Handed"
+    if (lower_name == "feet") return "3x3x3 With Feet"
+    if (lower_name == "fmc") return "3x3x3 Fewest Moves"
+    if (lower_name == "bld" || name == "3bld") return "3x3x3 Blindfolded"
+    if (lower_name == "4bld") return "4x4x4 Blindfolded"
+    if (lower_name == "5bld") return "5x5x5 Blindfolded"
+    if (lower_name == "mbld") return "3x3x3 Multi Blind"
+    if (lower_name == "skewb" || name == "skweb") return "Skewb"
     return name
 }
