@@ -15,7 +15,27 @@
         <script src="lib/Treant.js"></script>
         <script src="lib/super-simple.js"></script>
         <div id="hand-selector"></div>
-        <div class="chart" id="tree-simple"></div>
+        <div id="controls">
+            <div>
+                Create A Node
+                <br/>
+                <input type="text" placeholder="Parent" id="new-node-parent"></input>
+                <br/>
+                <input type="text" placeholder="New Node" id="new-node-name"></input>
+                <br/>
+                <input type="button" value="Create" onclick=createNewNode()>
+            </div>
+            <br/><br/>
+            <div>
+                Delete a node
+                <br/>
+                <input type="text" placeholder="Node Name" id="delete-node-name"></input>
+                <br/>
+                <input type="button" value="Delete" onclick=deleteNode()>
+            </div>
+        </div>
+
+        <div class="chart" id="main-chart"></div>
     </body>
 </html>
 <script>main()</script>
