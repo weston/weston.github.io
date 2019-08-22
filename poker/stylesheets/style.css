@@ -1,3 +1,46 @@
 #controls{
     padding-left: 30px;
 }
+
+.chart {
+    height: 600px;
+    width: 95%;
+}
+
+.customNode {
+    height: 140px;
+    width: 200px;
+    text-align: center;
+}
+
+p.node-title {
+    color: green;
+    text-align: left;
+    padding: 10px;
+}
+p.node-desc{
+    font-size: 12px;
+}
+#leftbox {
+    text-align: center;
+    float:left;
+    width:33%;
+    height:100px;
+}
+#middlebox{
+    text-align: center;
+    float:left;
+    width:33%;
+    height:100px;
+}
+#rightbox{
+    text-align: center;
+    float:left;
+    width:33%;
+    height:100px;
+}
+#board {
+    height: 24px;
+    text-align: center;
+    font-size: 24px;
+}
