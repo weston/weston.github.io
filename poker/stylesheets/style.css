@@ -11,6 +11,9 @@
     height: 140px;
     width: 200px;
     text-align: center;
+    background-color: white;
+    color: black;
+    padding-top:15px;
 }
 
 p.node-title {

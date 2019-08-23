@@ -2,17 +2,27 @@ ROOT = {
     name: "preflop range",
     cards: "",
     children: [],
-    number: 0,
+    number: "0",
 }
 NODE_COUNT = 0
+SELECTED_NODE = "" // Set to 0 in main
+
+SELECTED_COLOR = "#98d3f5"
+DEFAULT_COLOR = "white"
+HIGHLIGHT_COLOR = "#d5f7de"
 
 function main(){
     redraw()
+    selectNode("0")
 }
 
 
 function createNewNode(){
-    var parentNumber = parseInt(document.getElementById("new-node-parent").value, 10)
+    if (SELECTED_NODE == "") {
+        console.log("No selected node")
+        return
+    }
+    var parentNumber = SELECTED_NODE
     var newChildName = document.getElementById("new-node-name").value
     var newInputRange = document.getElementById("new-input-range").value
     if (newChildName.length == 0) {
@@ -31,14 +41,17 @@ function createNewNode(){
         name: newChildName,
         cards: newInputRange,
         children: [],
-        number: NODE_COUNT,
+        number: NODE_COUNT.toString(),
     })
     redraw()
 }
 
 
 function deleteNode(){
-    var nodeToDeleteNumber = parseInt(document.getElementById("delete-node-number").value, 10)
+    var nodeToDeleteNumber = SELECTED_NODE
+    if (nodeToDeleteNumber == 0) {
+        return
+    }
     var parentNode = getParent(ROOT, nodeToDeleteNumber)
     if (parentNode == null) {
         console.log("Node does not exist")
@@ -54,7 +67,7 @@ function deleteNode(){
 
 
 function updateNodeCards(){
-    var updateNodeNumber = parseInt(document.getElementById("update-node-number").value, 10)
+    var updateNodeNumber = SELECTED_NODE
     var newCards = document.getElementById("input-range").value
     var node = getNode(ROOT, updateNodeNumber)
     node.cards = newCards
@@ -72,7 +85,69 @@ function redraw(){
         nodeStructure: getNodeStructureForNode(ROOT)
     };
     new Treant(CHART_CONFIG);
+    for (var i = 0; i < NODE_COUNT + 1; i++) {
+        var nodeID = getNodeID(i.toString())
+        var elem = document.getElementById(nodeID)
+        if (elem != undefined) {
+            // Necessary because javascript sucks
+            var nodeNumber = i.toString()
+            elem.onclick = (function(i) {
+                return function(){selectNode(i)}})(nodeNumber);
+            elem.onmouseenter = (function(i) {
+                return function(){highlightNode(i)}})(nodeNumber);
+            elem.onmouseleave = (function(i) {
+                return function(){unHighlightNode(i)}})(nodeNumber);
+        }
+    }
+    colorNode(SELECTED_NODE, SELECTED_COLOR)
 }
+
+
+function highlightNode(nodeNumber){
+    if (nodeNumber == SELECTED_NODE) {
+        return
+    }
+    colorNode(nodeNumber, HIGHLIGHT_COLOR)
+}
+
+
+function unHighlightNode(nodeNumber){
+    if (nodeNumber == SELECTED_NODE) {
+        return
+    }
+    colorNode(nodeNumber, DEFAULT_COLOR)
+}
+
+
+function colorNode(nodeNumber, color) {
+    var n = document.getElementById(getNodeID(nodeNumber))
+    if (n != undefined && n != null) {
+        n.style.backgroundColor = color
+    }
+}
+
+
+function selectNode(nodeNumber){
+    if (nodeNumber == "") {
+        return
+    }
+    // Unselect a node
+    if (SELECTED_NODE == nodeNumber){
+        colorNode(nodeNumber, DEFAULT_COLOR)
+        SELECTED_NODE = ""
+        return
+    }
+    colorNode(SELECTED_NODE, DEFAULT_COLOR)
+    SELECTED_NODE = nodeNumber
+    colorNode(SELECTED_NODE, SELECTED_COLOR)
+    var internalNode = getNode(ROOT, nodeNumber)
+    setRangePickerRange(internalNode.cards)
+}
+
+function getNodeID(nodeNumber){
+    return "node-" + nodeNumber
+}
+
 
 // Looks at the poker.js nodes and turns them into
 // treant.js style node structures
@@ -80,10 +155,10 @@ function getNodeStructureForNode(node) {
     // TODO Make this a photo of the cards instead of text
     var currentNodeConfig = {
         text: {
-            title: node.number,
             name: node.name,
             desc: node.cards,
         },
+        HTMLid: "node-" + node.number,
         children: []
     }
     for (var i = 0; i < node.children.length; i++) {
@@ -114,11 +189,14 @@ function getParent(root, nodeNumber) {
         return null
     }
     for (var i = 0; i < root.children.length; i++) {
-        console.log(root.children[i].number)
-        console.log(nodeNumber)
         if (root.children[i].number == nodeNumber){
             return root
         }
     }
     return null
+}
+
+
+function setRangePickerRange(range){
+    var elem = document.getElementById("input-range").value = range
 }
