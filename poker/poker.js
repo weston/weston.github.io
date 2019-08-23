@@ -4,6 +4,8 @@ ROOT = {
     children: [],
     number: "0",
 }
+
+BASE_URL = "https://weston.github.io/poker/index.html"
 NODE_COUNT = 0
 SELECTED_NODE = "" // Set to 0 in main
 
@@ -14,6 +16,11 @@ HIGHLIGHT_COLOR = "#d5f7de"
 function main(){
     redraw()
     selectNode("0")
+    var data = getParameter("data")
+    if (data != null && data != undefined && data != ""){
+        ROOT = JSON.parse(data)
+        redraw()
+    }
 }
 
 
@@ -100,6 +107,7 @@ function redraw(){
         }
     }
     colorNode(SELECTED_NODE, SELECTED_COLOR)
+    updateLink()
 }
 
 
@@ -199,4 +207,23 @@ function getParent(root, nodeNumber) {
 
 function setRangePickerRange(range){
     var elem = document.getElementById("input-range").value = range
+}
+
+
+function updateLink(){
+    var elem = document.getElementById("generated-link")
+    var newURL = BASE_URL + "?data=" + encodeURI(JSON.stringify(ROOT))
+    elem.value = newURL
+}
+
+
+function getParameter(name) {
+    var url = window.location.href;
+    console.log(url)
+    var name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+    var results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
