@@ -56,7 +56,7 @@ td.selected-cell {
 }
 
 .highlighted-cell {
-    background-color: "#d5f7de";
+    background-color: #d5f7de !important;
 }
 
 .pocket-pair {

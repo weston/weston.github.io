@@ -121,8 +121,8 @@ function highlightNode(nodeNumber){
         return
     }
     colorNode(nodeNumber, HIGHLIGHT_COLOR)
-    //var n = getNode(ROOT, nodeNumber)
-    //highlightHands(n.cards)
+    var n = getNode(ROOT, nodeNumber)
+    highlightHands(n.cards)
 }
 
 
@@ -131,6 +131,7 @@ function unHighlightNode(nodeNumber){
         return
     }
     colorNode(nodeNumber, DEFAULT_COLOR)
+    unHighlightHands()
 }
 
 

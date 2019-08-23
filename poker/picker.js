@@ -116,17 +116,26 @@ function deselectAllHands() {
 
 
 function highlightHands(hands) {
+    console.log(hands)
     var cards = hands.split(HAND_SPLITTER)
     for (var i = 0; i < cards.length; i++) {
         var e = document.getElementById(getCellID(cards[i]))
+        if (e == undefined || e == null){
+            console.log("Did not find cell " + cards[i])
+            continue
+        }
         e.classList.add("highlighted-cell")
     }
 }
 
 
-function dehighlightHands() {
-    var selectedNode = getNode(ROOT, SELECTED_NODE)
-    var selectedHands = selectedNode.cards.split(HAND_SPLITTER)
+function unHighlightHands() {
+    for (var x = 0; x < 13; x++) {
+        for (var y = 0; y < 13; y++) {
+            var e = document.getElementById(getCellID(ALL_CARDS[x][y]))
+                e.classList.remove("highlighted-cell")
+        }
+    }
 }
 
 
