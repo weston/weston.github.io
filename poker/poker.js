@@ -17,9 +17,13 @@ function main(){
     redraw()
     selectNode("0")
     var data = getParameter("data")
+    var board = getParameter("board")
     if (data != null && data != undefined && data != ""){
         ROOT = JSON.parse(data)
         redraw()
+    }
+    if (board != null && board != undefined) {
+        document.getElementById("board").value = board
     }
 }
 
@@ -212,7 +216,8 @@ function setRangePickerRange(range){
 
 function updateLink(){
     var elem = document.getElementById("generated-link")
-    var newURL = BASE_URL + "?data=" + encodeURI(JSON.stringify(ROOT))
+    var board = document.getElementById("board').value
+    var newURL = BASE_URL + "?data=" + encodeURI(JSON.stringify(ROOT)) + "&board=" + board
     elem.value = newURL
 }
 
