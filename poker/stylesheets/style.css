@@ -3,7 +3,7 @@
 }
 
 .chart {
-    height: 600px;
+    height:600px;
     width: 95%;
 }
 
@@ -27,23 +27,46 @@ p.node-desc{
 #leftbox {
     text-align: center;
     float:left;
-    width:33%;
-    height:100px;
-}
-#middlebox{
-    text-align: center;
-    float:left;
-    width:33%;
+    width:30%;
     height:100px;
 }
 #rightbox{
     text-align: center;
     float:left;
-    width:33%;
+    width:70%;
     height:100px;
 }
 #board {
     height: 24px;
     text-align: center;
     font-size: 24px;
+}
+
+.cell {
+    border-color: black;
+    border: solid thin;
+    font-size: 10pt;
+    padding: 3px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+td.selected-cell {
+    background-color: #98d3f5;
+}
+
+.highlighted-cell {
+    background-color: "#d5f7de";
+}
+
+.pocket-pair {
+    background-color: #d1d1d1;
+}
+
+.suited {
+
+}
+
+.offsuit {
+
 }

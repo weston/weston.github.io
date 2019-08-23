@@ -25,6 +25,7 @@ function main(){
     if (board != null && board != undefined) {
         document.getElementById("board").value = board
     }
+    drawPicker()
 }
 
 
@@ -35,7 +36,6 @@ function createNewNode(){
     }
     var parentNumber = SELECTED_NODE
     var newChildName = document.getElementById("new-node-name").value
-    var newInputRange = document.getElementById("new-input-range").value
     if (newChildName.length == 0) {
         console.log("You must provide a child name")
         return
@@ -50,7 +50,7 @@ function createNewNode(){
     NODE_COUNT += 1
     parentNode.children.push({
         name: newChildName,
-        cards: newInputRange,
+        cards: "",
         children: [],
         number: NODE_COUNT.toString(),
     })
@@ -79,7 +79,8 @@ function deleteNode(){
 
 function updateNodeCards(){
     var updateNodeNumber = SELECTED_NODE
-    var newCards = document.getElementById("input-range").value
+    var newCards = getSelectedHands().join(HAND_SPLITTER)
+    console.log(newCards)
     var node = getNode(ROOT, updateNodeNumber)
     node.cards = newCards
     redraw()
@@ -120,6 +121,8 @@ function highlightNode(nodeNumber){
         return
     }
     colorNode(nodeNumber, HIGHLIGHT_COLOR)
+    //var n = getNode(ROOT, nodeNumber)
+    //highlightHands(n.cards)
 }
 
 
@@ -209,14 +212,9 @@ function getParent(root, nodeNumber) {
 }
 
 
-function setRangePickerRange(range){
-    var elem = document.getElementById("input-range").value = range
-}
-
-
 function updateLink(){
     var elem = document.getElementById("generated-link")
-    var board = document.getElementById("board').value
+    var board = document.getElementById("board").value
     var newURL = BASE_URL + "?data=" + encodeURI(JSON.stringify(ROOT)) + "&board=" + board
     elem.value = newURL
 }
@@ -224,11 +222,16 @@ function updateLink(){
 
 function getParameter(name) {
     var url = window.location.href;
-    console.log(url)
     var name = name.replace(/[\[\]]/g, '\\$&');
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
     var results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+
+function appendBoard(button) {
+    document.getElementById("board").value = document.getElementById(
+        "board").value + button.value
 }

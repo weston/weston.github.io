@@ -8,10 +8,17 @@
         <br/>
         <center><input type="text" id="generated-link"></input></center>
         <center><input type="text" id="board" placeholder="Board"></input></center>
+        <center>
+            <input type=button value="&#9824;" onclick="appendBoard(this)"></button>
+            <input type=button value="&#9827;" onclick="appendBoard(this)"></button>
+            <input type=button value="&#9830;" onclick="appendBoard(this)"></button>
+            <input type=button value="&#9829;" onclick="appendBoard(this)"></button>
+        </center>
         <link rel="stylesheet" href="lib/Treant.css">
         <link rel="stylesheet" href="lib/super-simple.css">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
         <script src="poker.js"></script>
+        <script src="picker.js"></script>
     </head>
     <body>
         <script src="lib/raphael.js"></script>
@@ -21,30 +28,26 @@
         <br/><br/>
         <div id="controls">
             <div id="leftbox">
-                Create A Node
-                <br/>
+                <input type="button" value="Create a node" onclick=createNewNode()>
                 <input type="text" placeholder="Name" id="new-node-name"></input>
                 <br/>
-                <input type="text" placeholder="Range" id="new-input-range"></input>
                 <br/>
-                <input type="button" value="Create" onclick=createNewNode()>
-            </div>
-            <div id="middlebox">
+                <input type="button" value="Delete Selected Node" onclick=deleteNode()>
+                <br/>
+                <br/>
                 Update Range
                 <br/>
-                <input type="text" placeholder="Range" id="input-range"></input>
+                <center><div id="hand-picker"></div></center>
                 <br/>
                 <input type="button" value="Update" onclick=updateNodeCards()>
+
             </div>
             <div id="rightbox">
-                Delete a node
-                <br/>
-                <input type="button" value="Delete" onclick=deleteNode()>
+            <div class="chart" id="main-chart"></div>
             </div>
 
         </div>
-        <div class="chart" id="main-chart"></div>
-    </body>
+            </body>
 </html>
 <script>main()</script>
 
