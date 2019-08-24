@@ -1,5 +1,5 @@
 ROOT = {
-    name: "preflop range",
+    name: "Preflop Range",
     cards: "",
     children: [],
     number: "0",
