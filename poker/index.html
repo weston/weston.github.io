@@ -28,24 +28,22 @@
         <br/><br/>
         <div id="controls">
             <div id="leftbox">
-                <input type="button" value="Create a node" onclick=createNewNode()>
                 <input type="text" placeholder="Name" id="new-node-name"></input>
+                <input type="button" value="  Create child node  " onclick=createNewNode()>
                 <br/>
                 <br/>
-                <input type="button" value="Create XC XR XF Nodes" onclick=createXRCCXFChildren()>
-                <br/>
-                <br/>
-                <input type="button" value="Delete Selected Node" onclick=deleteNode()>
+                <input type="button" value="  Delete Selected Node  " onclick=deleteNode()>
+                <input type="button" value="  Create XC XR XF Nodes  " onclick=createXRCCXFChildren()>
                 <br/>
                 <br/>
                 Update Range
                 <br/>
                 <center><div id="hand-picker"></div></center>
                 <br/>
-                <input type="button" value="Set" onclick=updateNodeCards()>
+                <input type="button" value="    Set Node Range    " onclick=updateNodeCards()>
                 <br/>
                 <br/>
-                <input type="button" value="Copy Parent" onclick=selectParentNodeCards()>
+                <input type="button" value="    Copy Parent Range    " onclick=selectParentNodeCards()>
             </div>
             <div id="rightbox">
             <div class="chart" id="main-chart"></div>

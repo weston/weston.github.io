@@ -5,7 +5,7 @@ ROOT = {
     number: "0",
 }
 
-BASE_URL = "https://weston.github.io/poker/index.html"
+BASE_URL = "https://weston.github.io/poker/"
 NODE_COUNT = 0
 SELECTED_NODE = "" // Set to 0 in main
 
@@ -20,6 +20,7 @@ function main(){
     var board = getParameter("board")
     if (data != null && data != undefined && data != ""){
         ROOT = JSON.parse(data)
+        NODE_COUNT = 100
         redraw()
     }
     if (board != null && board != undefined) {
