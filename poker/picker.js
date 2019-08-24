@@ -89,6 +89,7 @@ function getSelectedHands() {
 
 function setSelectedHands(handList) {
     deselectAllHands()
+    unHighlightHands()
     for (var i = 0; i < handList.length; i++) {
         selectHand(handList[i])
     }
@@ -157,7 +158,9 @@ function unHighlightHands() {
     for (var x = 0; x < 13; x++) {
         for (var y = 0; y < 13; y++) {
             var e = document.getElementById(getCellID(ALL_CARDS[x][y]))
+            if (e != null) {
                 e.classList.remove("highlighted-cell")
+            }
         }
     }
 }
