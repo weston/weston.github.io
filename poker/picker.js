@@ -40,11 +40,35 @@ function drawPicker(){
             if (x == y) {
                 c.classList.add("pocket-pair")
             }
-            c.onclick = (function(i) {
-                return function(){toggleSelection(i)}})(ALL_CARDS[x][y]);
+            c.classList.add("noselect")
+            c.onmousedown = (function(i) {
+                return function(){
+                    toggleSelection(i)
+                    toggleDragToSelect("on")
+                }
+            })(ALL_CARDS[x][y]);
+            c.onmouseup = function(){toggleDragToSelect("off")}
             newRow.appendChild(c)
         }
         picker.appendChild(newRow)
+    }
+}
+
+function toggleDragToSelect(direction){
+    for (var x = 0; x < 13; x++) {
+        for (var y = 0; y < 13; y++) {
+            var e = document.getElementById(getCellID(ALL_CARDS[x][y]))
+            if (direction == "on"){
+                e.onmouseenter = (function(i) {
+                    return function(){
+                        toggleSelection(i)
+                        toggleDragToSelect("on")
+                    }
+                })(ALL_CARDS[x][y]);
+            } else{
+                e.onmouseenter = function(){}
+            }
+        }
     }
 }
 

@@ -20,6 +20,8 @@ function main(){
     var board = getParameter("board")
     if (data != null && data != undefined && data != ""){
         ROOT = JSON.parse(data)
+        // This is a hack. This should be saved in the link, and then
+        // set here.
         NODE_COUNT = 100
         redraw()
     }
