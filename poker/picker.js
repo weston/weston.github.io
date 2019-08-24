@@ -22,7 +22,6 @@ function getPicker(){
 
 function setRangePickerRange(range){
     var cards = range.split(HAND_SPLITTER)
-    console.log(cards)
     setSelectedHands(cards)
 }
 
@@ -141,7 +140,6 @@ function deselectAllHands() {
 
 
 function highlightHands(hands) {
-    console.log(hands)
     var cards = hands.split(HAND_SPLITTER)
     for (var i = 0; i < cards.length; i++) {
         var e = document.getElementById(getCellID(cards[i]))
