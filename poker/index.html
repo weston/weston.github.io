@@ -32,6 +32,9 @@
                 <input type="text" placeholder="Name" id="new-node-name"></input>
                 <br/>
                 <br/>
+                <input type="button" value="Create XC XR XF Nodes" onclick=createXRCCXFChildren()>
+                <br/>
+                <br/>
                 <input type="button" value="Delete Selected Node" onclick=deleteNode()>
                 <br/>
                 <br/>
@@ -39,8 +42,10 @@
                 <br/>
                 <center><div id="hand-picker"></div></center>
                 <br/>
-                <input type="button" value="Update" onclick=updateNodeCards()>
-
+                <input type="button" value="Set" onclick=updateNodeCards()>
+                <br/>
+                <br/>
+                <input type="button" value="Copy Parent" onclick=selectParentNodeCards()>
             </div>
             <div id="rightbox">
             <div class="chart" id="main-chart"></div>

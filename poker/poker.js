@@ -30,16 +30,22 @@ function main(){
 
 
 function createNewNode(){
-    if (SELECTED_NODE == "") {
-        console.log("No selected node")
-        return
-    }
-    var parentNumber = SELECTED_NODE
+
     var newChildName = document.getElementById("new-node-name").value
     if (newChildName.length == 0) {
         console.log("You must provide a child name")
         return
     }
+    createNewNodeWithName(newChildName)
+}
+
+
+function createNewNodeWithName(newChildName){
+    if (SELECTED_NODE == "") {
+        console.log("No selected node")
+        return
+    }
+    var parentNumber = SELECTED_NODE
     console.log("Creating a new node")
     var parentNode = getNode(ROOT, parentNumber)
     if (parentNode == null){
@@ -235,4 +241,17 @@ function getParameter(name) {
 function appendBoard(button) {
     document.getElementById("board").value = document.getElementById(
         "board").value + button.value
+}
+
+
+function selectParentNodeCards(){
+    var parentNode = getParent(ROOT, SELECTED_NODE)
+    setRangePickerRange(parentNode.cards)
+}
+
+
+function createXRCCXFChildren(){
+    createNewNodeWithName("Check Call")
+    createNewNodeWithName("Check Raise")
+    createNewNodeWithName("Check Fold")
 }
