@@ -216,6 +216,11 @@ function getParent(root, nodeNumber) {
     for (var i = 0; i < root.children.length; i++) {
         if (root.children[i].number == nodeNumber){
             return root
+        }else {
+            var candidate = getParent(root.children[i], nodeNumber)
+            if (candidate != null) {
+                return candidate
+            }
         }
     }
     return null
