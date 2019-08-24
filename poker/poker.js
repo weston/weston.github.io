@@ -178,14 +178,9 @@ function getNodeID(nodeNumber){
 // treant.js style node structures
 function getNodeStructureForNode(node) {
     // TODO Make this a photo of the cards instead of text
-    var hands = node.cards.split(HAND_SPLITTER)
-    var numCards = hands.length
-    if (numCards == 1 && hands[0] == ""){
-        numCards = 0
-    }
     var currentNodeConfig = {
         text: {
-            name: node.name + " (" + numCards.toString()+")",
+            name: node.name,
             desc: node.cards,
         },
         HTMLid: "node-" + node.number,
