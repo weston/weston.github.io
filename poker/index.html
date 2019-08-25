@@ -31,14 +31,24 @@
         <link rel="stylesheet" href="lib/Treant.css">
         <link rel="stylesheet" href="lib/super-simple.css">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="stylesheets/slider.css">
         <script src="poker.js"></script>
         <script src="picker.js"></script>
+        <script src="utils.js"></script>
+        <div id="node-view-toggle">
+            Toggle Node View
+            <br/>
+            <br/>
+            <label class="switch">
+                <input type="checkbox" onclick=toggleNodeView()></input>
+                <span class="slider round"></span>
+            </label>
+        </div>
     </head>
     <body>
         <script src="lib/raphael.js"></script>
         <script src="lib/Treant.js"></script>
         <script src="lib/super-simple.js"></script>
-        <div id="hand-selector"></div>
         <br/><br/>
         <div id="controls">
             <div id="leftbox">
@@ -58,11 +68,13 @@
                 <br/>
                 <br/>
                 <input type="button" value="    Copy Parent Range    " onclick=selectParentNodeCards()>
+                <br/>
+                <br/>
+                <input type="button" value="    Clear    " onclick=deselectAllHands()>
             </div>
             <div id="rightbox">
             <div class="chart" id="main-chart"></div>
             </div>
-
         </div>
             </body>
 </html>

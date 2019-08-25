@@ -13,6 +13,8 @@ SELECTED_COLOR = "#98d3f5"
 DEFAULT_COLOR = "white"
 HIGHLIGHT_COLOR = "#d5f7de"
 
+MINI_GRID_ON = false
+
 function main(){
     redraw()
     selectNode("0")
@@ -89,7 +91,6 @@ function deleteNode(){
 function updateNodeCards(){
     var updateNodeNumber = SELECTED_NODE
     var newCards = getSelectedHands().join(HAND_SPLITTER)
-    console.log(newCards)
     var node = getNode(ROOT, updateNodeNumber)
     node.cards = newCards
     redraw()
@@ -178,11 +179,16 @@ function getNodeID(nodeNumber){
 // treant.js style node structures
 function getNodeStructureForNode(node) {
     // TODO Make this a photo of the cards instead of text
+    var miniGrid = ""
+    if (MINI_GRID_ON) {
+        miniGrid = getMiniGrid(node.cards, node.name).outerHTML
+    }
     var currentNodeConfig = {
         text: {
             name: node.name,
-            desc: node.cards,
+            desc: abbreviateHandList(node.cards),
         },
+        innerHTML: miniGrid,
         HTMLid: "node-" + node.number,
         children: []
     }
@@ -262,4 +268,14 @@ function createXRCCXFChildren(){
     createNewNodeWithName("Check Call")
     createNewNodeWithName("Check Raise")
     createNewNodeWithName("Check Fold")
+}
+
+
+function toggleNodeView() {
+    if (MINI_GRID_ON) {
+        MINI_GRID_ON = false
+    } else {
+        MINI_GRID_ON = true
+    }
+    redraw()
 }
