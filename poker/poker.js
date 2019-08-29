@@ -271,6 +271,12 @@ function createXRCCXFChildren(){
 }
 
 
+function createBCChildren(){
+    createNewNodeWithName("Bet")
+    createNewNodeWithName("Check")
+}
+
+
 function toggleNodeView() {
     if (MINI_GRID_ON) {
         MINI_GRID_ON = false
