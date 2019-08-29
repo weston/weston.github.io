@@ -168,3 +168,30 @@ function getCellID(hand) {
     return "cell-" + hand
 
 }
+
+
+function rfi(){
+    hands = "AA, KK, QQ, JJ, TT, 99, 88, 77, 66, 55, 44, 33, 22, "
+    hands += "AKs, AQs, AJs, ATs, A9s, A8s, A7s, A6s, A5s, A4s, A3s, A2s, "
+    hands += "KQs, KJs, KTs, K9s, K8s, QJs, QTs, Q9s, Q8s, JTs, J9s, J8s, "
+    hands += "T9s, T8s, 98s, 87s, 76s, 65s, 54s, "
+    hands += "AKo, AQo, AJo, ATo, KQo, KJo, KTo, QJo, QTo, JTo"
+    unHighlightHands()
+    highlightHands(hands)
+}
+
+
+function polarizedThreeBet(){
+    hands = "AA, KK, QQ, JJ, TT, AKs, AQs, AJs, KQs, A5s, A4s, A3s, A2s, "
+    hands += "76s, 65s, 54s, AQo"
+    unHighlightHands()
+    highlightHands(hands)
+}
+
+
+function rfiDefend(){
+    hands = "ATs, A9s, KJs, KTs, KQo, QJs, QTs, AJo, JTs, "
+    hands += "T9s, 99, 98s, 88, 87s, 77, 66, 55, 44, 33, 22, ATo, KJo, QJo"
+    unHighlightHands()
+    highlightHands(hands)
+}
