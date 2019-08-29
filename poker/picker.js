@@ -177,7 +177,8 @@ function rfi(){
     hands += "T9s, T8s, 98s, 87s, 76s, 65s, 54s, "
     hands += "AKo, AQo, AJo, ATo, KQo, KJo, KTo, QJo, QTo, JTo"
     unHighlightHands()
-    highlightHands(hands)
+    deselectAllHands()
+    setRangePickerRange(hands)
 }
 
 
@@ -185,7 +186,8 @@ function polarizedThreeBet(){
     hands = "AA, KK, QQ, JJ, TT, AKs, AQs, AJs, KQs, A5s, A4s, A3s, A2s, "
     hands += "76s, 65s, 54s, AQo"
     unHighlightHands()
-    highlightHands(hands)
+    deselectAllHands()
+    setRangePickerRange(hands)
 }
 
 
@@ -193,5 +195,6 @@ function rfiDefend(){
     hands = "ATs, A9s, KJs, KTs, KQo, QJs, QTs, AJo, JTs, "
     hands += "T9s, 99, 98s, 88, 87s, 77, 66, 55, 44, 33, 22, ATo, KJo, QJo"
     unHighlightHands()
-    highlightHands(hands)
+    deselectAllHands()
+    setRangePickerRange(hands)
 }
