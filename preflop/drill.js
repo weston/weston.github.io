@@ -72,10 +72,11 @@ function drawHand(hand) {
     ]
     s1 = suits[Math.floor(Math.random() * suits.length)]
     s2 = suits[Math.floor(Math.random() * suits.length)]
-    if (hand.length == 2) {
-        while (s2 == s1) {
+    while (s2 == s1) {
             s2 = suits[Math.floor(Math.random() * suits.length)]
         }
+
+    if (hand.length == 2) {
         handElement.innerHTML = hand[0] + s1 + " " + hand[1] + s2
     } else if (hand[2] == "s") {
         handElement.innerHTML = hand[0] + s1 + " " + hand[1] + s1
