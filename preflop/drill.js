@@ -36,8 +36,8 @@ function runGame(rangeName, previousResult) {
     drawHand(hand)
     outButton = document.getElementById("out_button")
     inButton = document.getElementById("in_button")
-    inButton.innerHTML = range["in"] + " ([)"
-    outButton.innerHTML = range["out"] + " (])"
+    inButton.innerHTML = range["in"] + " ]"
+    outButton.innerHTML = range["out"] + " ["
     parsedHands = parseHandString(range["hands"])
     isIn = parsedHands.includes(hand)
     if (isIn) {
