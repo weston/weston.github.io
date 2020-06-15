@@ -36,8 +36,8 @@ function runGame(rangeName, previousResult) {
     drawHand(hand)
     outButton = document.getElementById("out_button")
     inButton = document.getElementById("in_button")
-    inButton.innerHTML = range["in"] + " (p)"
-    outButton.innerHTML = range["out"] + " (q)"
+    inButton.innerHTML = range["in"] + " ([)"
+    outButton.innerHTML = range["out"] + " (])"
     parsedHands = parseHandString(range["hands"])
     isIn = parsedHands.includes(hand)
     if (isIn) {
@@ -131,10 +131,10 @@ function parseHandString(handString) {
 
 
 function acceptInput(evt){
-    if (evt["key"] == "q") {
+    if (evt["key"] == "[") {
         document.getElementById("out_button").click()
     }
-    if (evt["key"] == "p") {
+    if (evt["key"] == "]") {
         document.getElementById("in_button").click()
     }
 }
