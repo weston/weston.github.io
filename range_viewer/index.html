@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="css/super-simple.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css", href="css/external/pure.css">
+        <link rel="stylesheet" type="text/css", href="css/weights.css">
+        <script src="js/picker.js"></script>
+        <script src="js/range-explorer.js"></script>
+        <script src="js/super-simple.js"></script>
+        <br/><br/>
+    </head>
+
+    <body id="body">
+        <center>
+        <div class="pure-g">
+            <div class="pure-u-7-24 center" id="left-column">
+                <input type="button" class="pure-button pure-button-active" value="Select None" onclick=deselectAllHands('rs1')></input>
+                <br/><br/>
+            </div>
+            <div class="pure-u-10-24 center" id="center-column">
+                <div class="slidecontainer">
+                    Selector Weight: <span id="selector-weight-value">100</span> <br/><br/>
+                    <input type="range" min="0" max="20" value="20" class="slider" id="slider">
+                </div>
+                <br/><br/>
+                <div id="board-container">
+                    <input type="text" maxlength="10" id="board" placeholder="Board"></input>
+                    <br/><br/>
+                    <input type="button" class="pure-button pure-button-active" value="2" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="3" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="4" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="5" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="6" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="7" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="8" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="9" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="T" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="J" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="Q" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="K" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="A" onclick="appendBoard(this)"></button>
+                    <br/><br/>
+                    <input type="button" class="pure-button pure-button-active club" value="♣️" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="♦️" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="♥️" onclick="appendBoard(this)"></button>
+                    <input type="button" class="pure-button pure-button-active" value="♠️" onclick="appendBoard(this)"></button>
+                    <br/><br/>
+                </div>
+                <input type="button" class="pure-button pure-button-active" id="run-button"value="Run Analysis" onclick="runAnalysis()"></button>
+                <br/><br/>
+                <div id="hover-box" class="pure-g"></div>
+            </div>
+            <div class="pure-u-7-24 center" id="right-column">
+                <input type="button" class="pure-button pure-button-active" value="Select None" onclick=deselectAllHands('rs2')></input>
+                <br/><br/>
+            </div>
+        </div>
+        </center>
+    </body>
+
+</html>
+<script>main()</script>
+
