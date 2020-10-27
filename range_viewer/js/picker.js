@@ -14,6 +14,7 @@ ALL_CARDS = [
     ["A2o","K2o","Q2o","J2o","T2o","92o","82o","72o","62o","52o","42o","32o","22"],
 ]
 SUITS = ["c", "d", "h", "s"]
+RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"]
 HAND_SPLITTER = ", "
 SUIT_TO_SYMBOL = {
     "c": "♣️",
@@ -21,16 +22,17 @@ SUIT_TO_SYMBOL = {
     "h": "♥️",
     "s": "♠️",
 }
+SYMBOL_TO_SUIT = {
+    "♣️": "c",
+    "♦️": "d",
+    "♥️": "h",
+    "♠️": "s",
+}
 
 function getPicker(){
     return document.getElementById("hand-picker")
 }
 
-
-function setRangePickerRange(range){
-    var cards = range.split(HAND_SPLITTER)
-    setSelectedHands(cards)
-}
 
 
 function NewRangeSelector(parent_id, range_selector_id) {
@@ -87,25 +89,17 @@ function toggleDragToSelect(direction, range_selector_id){
 
 
 function getSelectedHands(selector_id) {
-    var selectedHands = []
+    var selectedHands = {}
     for (var x = 0; x < 13; x++) {
         for (var y = 0; y < 13; y++) {
             var e = document.getElementById(getCellID(ALL_CARDS[x][y], selector_id))
             if (e.classList.contains("selected-cell")) {
-                selectedHands.push(ALL_CARDS[x][y])
+                var hand = ALL_CARDS[x][y]
+                selectedHands[hand] = getHandWeightInt(hand, selector_id)
             }
         }
     }
     return selectedHands
-}
-
-
-function setSelectedHands(handList) {
-    deselectAllHands()
-    unHighlightHands()
-    for (var i = 0; i < handList.length; i++) {
-        selectHand(handList[i])
-    }
 }
 
 
@@ -209,36 +203,8 @@ function handleMouseHover(cell, selector_id) {
     hoverBox.appendChild(percentElem)
     hoverBox.appendChild(document.createElement("br"))
     hoverBox.appendChild(document.createElement("br"))
-    var handsToDisplay = []
-    if (handString.length == 2) {
-        for (var i = 0; i < SUITS.length; i++) {
-            for (var j = 0; j < SUITS.length; j++) {
-                if (j <= i) {
-                    continue
-                }
-                var s1 = SUITS[i]
-                var s2 = SUITS[j]
-                handsToDisplay.push(handString[0] + s1 + handString[0] + s2)
-            }
-        }
-    } else if (handString[2] == "s") {
-        for (var i = 0; i < SUITS.length; i++) {
-            var s = SUITS[i]
-            handsToDisplay.push(handString[0] + s + handString[1] + s)
-        }
-    } else {
-        for (var i = 0; i < SUITS.length; i++) {
-            for (var j = 0; j < SUITS.length; j++) {
-                var s1 = SUITS[i]
-                var s2 = SUITS[j]
-                if (s1 == s2) {
-                    continue
-                }
-                handsToDisplay.push(handString[0] + s1 + handString[1] + s2)
-            }
-        }
-    }
 
+    var handsToDisplay = expandHands(handString)
     for (var i = 0; i < handsToDisplay.length; i++) {
         var specificHandString = handsToDisplay[i]
         var elem = document.createElement("div")
@@ -256,6 +222,39 @@ function handleMouseHover(cell, selector_id) {
         elem.classList.add("hover-box-elem")
         hoverBox.appendChild(elem)
     }
+}
+
+function expandHands(handString) {
+    var allHands = []
+    if (handString.length == 2) {
+        for (var i = 0; i < SUITS.length; i++) {
+            for (var j = 0; j < SUITS.length; j++) {
+                if (j <= i) {
+                    continue
+                }
+                var s1 = SUITS[i]
+                var s2 = SUITS[j]
+                allHands.push(handString[0] + s1 + handString[0] + s2)
+            }
+        }
+    } else if (handString[2] == "s") {
+        for (var i = 0; i < SUITS.length; i++) {
+            var s = SUITS[i]
+            allHands.push(handString[0] + s + handString[1] + s)
+        }
+    } else {
+        for (var i = 0; i < SUITS.length; i++) {
+            for (var j = 0; j < SUITS.length; j++) {
+                var s1 = SUITS[i]
+                var s2 = SUITS[j]
+                if (s1 == s2) {
+                    continue
+                }
+                allHands.push(handString[0] + s1 + handString[1] + s2)
+            }
+        }
+    }
+    return allHands
 }
 
 

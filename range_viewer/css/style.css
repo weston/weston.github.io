@@ -28,6 +28,28 @@
     padding-top: 10px;
 }
 
+#p1-wins {
+    background-color: #ff9999; /* red */
+    height:20px;
+    padding-top: 5px;
+}
+
+#ties {
+    background-color: #e6e6e6;
+    height:20px;
+    padding-top: 5px;
+}
+
+#p2-wins {
+    background-color: #66ff66; /* green */
+    height:20px;
+    padding-top: 5px;
+}
+
+#bar-graph {
+}
+
+
 /* Below is slider stuff from https://www.w3schools.com/howto/howto_js_rangeslider.asp */
 .slidecontainer {
   width: 35%;
