@@ -192,24 +192,28 @@ function getCell(hand, selector_id) {
 
 function handleMouseHover(cell, selector_id) {
     var handString = cell.innerHTML
-    var hoverBox = document.getElementById("hover-box")
-    hoverBox.innerHTML = ""
+    var hoverBoxContainer = document.getElementById("hover-box-container")
+    var hoverBox = document.createElement("div")
+    hoverBox.id = "hover-box"
+    hoverBox.classList.add("pure-g")
+    hoverBoxContainer.innerHTML = ""
+    hoverBoxContainer.appendChild(hoverBox)
 
     var percentElem = document.createElement("div")
     var weight  = getHandWeightInt(handString, selector_id)
     percentElem.innerHTML = weight + "%"
     percentElem.classList.add("pure-u-1-1")
     percentElem.classList.add("weight-" + weight)
+    //hoverBox.classList.add("weight-" + weight) // This is pretty ugly
     hoverBox.appendChild(percentElem)
     hoverBox.appendChild(document.createElement("br"))
-    hoverBox.appendChild(document.createElement("br"))
-
     var handsToDisplay = expandHands(handString)
     for (var i = 0; i < handsToDisplay.length; i++) {
         var specificHandString = handsToDisplay[i]
         var elem = document.createElement("div")
+        var innerElem = document.createElement("div")
         var withSymbols = specificHandString[0] + SUIT_TO_SYMBOL[specificHandString[1]] + specificHandString[2] + SUIT_TO_SYMBOL[specificHandString[3]]
-        elem.innerHTML += withSymbols
+        innerElem.innerHTML += withSymbols
         if (handsToDisplay.length == 4) {
             elem.classList.add("pure-u-1-4")
         }
@@ -220,6 +224,19 @@ function handleMouseHover(cell, selector_id) {
             elem.classList.add("pure-u-1-3")
         }
         elem.classList.add("hover-box-elem")
+        innerElem.classList.add("hover-box-inner-elem")
+        elem.appendChild(innerElem)
+
+        var handToWinCount = GLOBAL_HAND_STATS[selector_id]["hand_wins"]
+        var handToLoseCount = GLOBAL_HAND_STATS[selector_id]["hand_losses"]
+        if (handToWinCount != undefined && handToLoseCount != undefined) {
+            var handWins = GLOBAL_HAND_STATS[selector_id]["hand_wins"][specificHandString]
+            var handLosses = GLOBAL_HAND_STATS[selector_id]["hand_losses"][specificHandString]
+            if (handWins != undefined && handLosses != undefined) {
+                var winPercent = (100 * handWins / (handWins + handLosses)).toFixed(2)
+                innerElem.innerHTML += ": " + winPercent + "%"
+            }
+        }
         hoverBox.appendChild(elem)
     }
 }

@@ -25,7 +25,12 @@
 }
 
 .hover-box-elem {
-    padding-top: 10px;
+}
+
+.hover-box-inner-elem {
+    border: solid thin;
+    padding: 5px;
+    padding-top: 8px;
 }
 
 #p1-wins {
