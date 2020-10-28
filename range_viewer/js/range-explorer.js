@@ -283,9 +283,13 @@ function cardStringToList(cardString) {
     return l
 }
 
-function createShowdownStatsChart(parent_id, data) {
-    document.getElementById(parent_id).innerHTML = ""
-    var ctx = document.getElementById(parent_id).getContext("2d")
+function createShowdownStatsChart(elem_id, data) {
+    var parent = document.getElementById(elem_id).parentElement
+    parent.innerHTML = ""
+    var elem = document.createElement("canvas")
+    elem.id = elem_id
+    parent.appendChild(elem)
+    var ctx = document.getElementById(elem_id).getContext("2d")
     var numbers = []
     var labels = []
     var colors = []
@@ -392,7 +396,11 @@ function createGraph() {
         labels.push(i)
     }
 
-    document.getElementById("graph-stats-canvas").innerHTML = ""
+    var parent = document.getElementById("graph-stats-canvas").parentElement
+    parent.innerHTML = ""
+    var elem = document.createElement("canvas")
+    elem.id = "graph-stats-canvas"
+    parent.appendChild(elem)
     var ctx = document.getElementById("graph-stats-canvas").getContext("2d")
     var mixedChart = new Chart(ctx, {
     type: 'scatter',
