@@ -325,5 +325,6 @@ function cleanLines(lines) {
 
 // This is just so we can call the function in
 // test_generate_lines.js
-exports.generateLines = generateLines
-exports.BetConfig = BetConfig
+// In order to run the tests we have to uncomment this
+// exports.generateLines = generateLines
+// exports.BetConfig = BetConfig
