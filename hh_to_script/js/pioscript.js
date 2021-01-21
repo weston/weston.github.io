@@ -1,5 +1,6 @@
 class PIOScript {
 	constructor(parsedHand, outputFilepath) {
+		console.log(parsedHand.flop)
 		this.script = []
 		this.setThreads(0)
 		this.setAccuracy(parsedHand.potSizes[FLOP] / 30)

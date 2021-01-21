@@ -62,11 +62,20 @@ class HandHistory {
     parseSeatsAndStacks() {
         this.usernameToPosition = {}
         this.usernameToStartingStack = {}
-        var lineIndex = 3
+        var lineIndex = 2
 		// Seats are 1 indexed
         var orderedPositions = ["", "BTN", "SB", "BB", "LJ", "HJ", "CO"]
-        while (this.hhLines[lineIndex].includes("Seat ")) {
+        while (true) {
 			var line = this.hhLines[lineIndex]
+			console.log(line)
+			if (line.includes("***")){
+				break
+			}
+			if (!line.includes("Seat ") || line.includes("Blitz Poker")) {
+				lineIndex += 1
+				continue
+			}
+
 			var username = line.split(": ")[1].split(" (")[0]
             var components = this.hhLines[lineIndex].split(" ")
             var position = orderedPositions[parseInt(components[1].split(":")[0])]
