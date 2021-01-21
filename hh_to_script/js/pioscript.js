@@ -3,7 +3,7 @@ class PIOScript {
 		console.log(parsedHand.flop)
 		this.script = []
 		this.setThreads(0)
-		this.setAccuracy(parsedHand.potSizes[FLOP] / 30)
+		this.setAccuracy(parsedHand.potSizes[FLOP] / 100)
 		this.setRange("OOP", this.getRange("OOP", parsedHand))
 		this.setRange("IP", this.getRange("IP", parsedHand))
 		this.setBoard(parsedHand.flop)
