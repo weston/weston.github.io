@@ -24,9 +24,17 @@ class Action {
 		"calls": CALL,
 	}
 
-	constructor(action_string) {
-		var components = action_string.split(" ")
-		this.username = components[0]
+	constructor(actionString, usernames) {
+		var components = actionString.split(" ")
+		this.username = null
+
+		// Can't really use split to get usernames because some have spaces
+		for (var i = 0; i < usernames.length; i++) {
+			var username = usernames[i]
+			if (actionString.includes(username)){
+				this.username = username
+			}
+		}
 		this.type = this.translateAction[components[1]]
 		if (this.type == BET) {
 			this.amount = Number(components[2].replace("$", ""))
@@ -95,7 +103,7 @@ class HandHistory {
 				if (line.includes("***")) {
 					break
 				}
-				this.actions[street].push(new Action(line))
+				this.actions[street].push(new Action(line, this.allUsernames()))
 			}
 		}
 	}
@@ -167,8 +175,7 @@ class HandHistory {
 		}
 		for (var i = 0; i < streets.length; i++) {
 			if (isNaN(this.effectiveStacks[streets[i]])) {
-				console.log(this.usernameToStartingStack)
-				console.log(this.effectiveStacks)
+				console.log("Found NaN Stack")
 			}
 		}
 	}
@@ -222,6 +229,14 @@ class HandHistory {
 				continue
 			}
 			usernames.push(action.username)
+		}
+		return usernames
+	}
+
+	allUsernames() {
+		var usernames = []
+		for (const [username, m] of Object.entries(this.usernameToPosition)) {
+			usernames.push(username)
 		}
 		return usernames
 	}
