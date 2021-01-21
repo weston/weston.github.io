@@ -41,8 +41,8 @@ class PIOScript {
 			return "IP"
 		}
 		if (parsedHand.preflopType() == "3BP") {
-			var includesSB = parsedHand.activePositions.includes("SB")
-			var includesBB = parsedHand.activePositions.includes("BB")
+			var includesSB = parsedHand.activePositions().includes("SB")
+			var includesBB = parsedHand.activePositions().includes("BB")
 			if (includesSB && includesBB) {
 				return "IP"
 			}
