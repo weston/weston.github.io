@@ -1,3 +1,5 @@
+SCALE_FACTOR = 100
+
 PREFLOP_MARKER = "*** HOLE CARDS ***"
 FLOP_MARKER = "*** FLOP ***"
 TURN_MARKER = "*** TURN ***"
@@ -37,9 +39,9 @@ class Action {
 		}
 		this.type = this.translateAction[components[1]]
 		if (this.type == BET) {
-			this.amount = Number(components[2].replace("$", ""))
+			this.amount = Number(components[2].replace("$", "")) * SCALE_FACTOR
 		} else if (this.type == RAISE){
-			this.amount = Number(components[4].replace("$", ""))
+			this.amount = Number(components[4].replace("$", "")) * SCALE_FACTOR
 		}else {
 			this.amount = null
 		}
@@ -68,7 +70,7 @@ class HandHistory {
 			var username = line.split(": ")[1].split(" (")[0]
             var components = this.hhLines[lineIndex].split(" ")
             var position = orderedPositions[parseInt(components[1].split(":")[0])]
-			var stack = Number(line.split("($")[1].split(")")[0])
+			var stack = Number(line.split("($")[1].split(")")[0]) * SCALE_FACTOR
             this.usernameToPosition[username] = position
             this.usernameToStartingStack[username] = stack
             lineIndex += 1
@@ -125,6 +127,7 @@ class HandHistory {
 			if (street != "") {
 				var potLine = this.hhLines[i+1]
 				var potSize = Number(potLine.split(" ")[2].replace("$", ""))
+				potSize *= SCALE_FACTOR
 				this.potSizes[street] = potSize
 			}
 		}
@@ -137,6 +140,7 @@ class HandHistory {
                 this.flop = line.split("[")[1].split("]")[0].split(" ")
                 this.pot = Number(
 					this.hhLines[i+1].split(" ")[2].replace("$", ""))
+				this.pot *= SCALE_FACTOR
                 return
             }
         }
