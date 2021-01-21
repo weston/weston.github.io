@@ -37,12 +37,16 @@ class PIOScript {
 	}
 
 	getCBetPosition(parsedHand) {
+		var includesSB = parsedHand.activePositions().includes("SB")
+		var includesBB = parsedHand.activePositions().includes("BB")
+
 		if (parsedHand.preflopType() == "SRP") {
+			if (includesSB && includesBB) {
+				return "OOP"
+			}
 			return "IP"
 		}
 		if (parsedHand.preflopType() == "3BP") {
-			var includesSB = parsedHand.activePositions().includes("SB")
-			var includesBB = parsedHand.activePositions().includes("BB")
 			if (includesSB && includesBB) {
 				return "IP"
 			}
