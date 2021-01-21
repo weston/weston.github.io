@@ -56,10 +56,11 @@ class HandHistory {
 		// Seats are 1 indexed
         var orderedPositions = ["", "BTN", "SB", "BB", "LJ", "HJ", "CO"]
         while (this.hhLines[lineIndex].includes("Seat ")) {
+			var line = this.hhLines[lineIndex]
+			var username = line.split(": ")[1].split(" (")[0]
             var components = this.hhLines[lineIndex].split(" ")
             var position = orderedPositions[parseInt(components[1].split(":")[0])]
-            var username = components[2]
-            var stack = Number(components[3].slice(2).split(")")[0])
+			var stack = Number(line.split("($")[1].split(")")[0])
             this.usernameToPosition[username] = position
             this.usernameToStartingStack[username] = stack
             lineIndex += 1
@@ -163,6 +164,12 @@ class HandHistory {
 			}
 			this.effectiveStacks[street] = this.effectiveStacks[
 				streets[i-1]] - adjustmentFromPreviousStreet
+		}
+		for (var i = 0; i < streets.length; i++) {
+			if (isNaN(this.effectiveStacks[streets[i]])) {
+				console.log(this.usernameToStartingStack)
+				console.log(this.effectiveStacks)
+			}
 		}
 	}
 

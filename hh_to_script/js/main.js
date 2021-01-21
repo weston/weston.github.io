@@ -47,6 +47,7 @@ function parse() {
 	var outputElem = document.getElementById("script-output")
 	outputElem.innerHTML = ""
 	for (var i = 0; i < parsedHands.length; i++) {
+		console.log(parsedHands[i].flop)
 		var filename = parsedHands[i].flop.join("").concat(".cfr")
 		var outputFile = outputDirectory.concat("\\").concat(filename)
 		var script = new PIOScript(parsedHands[i], outputFile)
