@@ -1,0 +1,136 @@
+<center><h1> Help me choose dating app photos </h1></center>
+<center><input type="text" placeholder="New (image url)" id="new_image"></input><button onclick=newImage() type="button" text="submit">Submit (pls no spam)</button>
+<center><span id="content"></span></center>
+<script>
+	URL = "http://ec2-35-167-176-184.us-west-2.compute.amazonaws.com/picture_voting/"
+	function load() {
+		const http = new XMLHttpRequest();
+		http.open("GET", URL);
+		http.send();
+		http.onreadystatechange = (e) => {
+			if (http.responseText.length > 0) {
+				drawContent(JSON.parse(http.responseText))
+			}
+		}
+	}
+	function drawContent(content) {
+		var pictures = []
+		Object.keys(content).forEach(function(key) {
+    		var value = content[key];
+			pictures.push({
+				"url": key,
+				"yes": value["yes"],
+				"no": value["no"],
+			})
+		});
+		pictures.sort(function(a, b) {
+			totalA = a["yes"] - a["no"]
+			totalB = b["yes"] - b["no"]
+  			return totalB - totalA
+		});
+		var elem = document.getElementById("content")
+		elem.innerHTML = ""
+		var table = document.createElement("table")
+		var row = document.createElement("tr")
+		var captions = []
+		for (var i = 0; i < pictures.length; i++) {
+			var captionParent = document.createElement("span")
+			var caption = document.createElement("center")
+			captionParent.appendChild(caption)
+			var yesButton = document.createElement("button")
+			yesButton.type = "button"
+			yesButton.innerHTML = "Yes! (" + pictures[i]["yes"].toString() + ")"
+			yesButton.actionType = "yes"
+			yesButton.imageID = pictures[i]["url"]
+			yesButton.onclick = vote
+			var noButton = document.createElement("button")
+			noButton.type = "button"
+			noButton.innerHTML = "No (" + pictures[i]["no"].toString() + ")"
+			noButton.onclick = vote
+			noButton.imageID = pictures[i]["url"]
+			noButton.actionType = "no"
+			caption.appendChild(noButton)
+			var spacer = document.createElement("span")
+			spacer.innerHTML = "&nbsp;&nbsp;<b>" + (pictures[i]["yes"] - pictures[i]["no"]).toString()
+			spacer.innerHTML += "</b>&nbsp;&nbsp;"
+			caption.appendChild(spacer)
+			caption.appendChild(yesButton)
+			var entry = document.createElement("td")
+			entry.classList.add("picture")
+			var image = document.createElement("img")
+			image.src = pictures[i]["url"]
+			image.alt = "uh oh"
+			image.width = 300
+			entry.appendChild(image)
+			row.appendChild(entry)
+			captions.push(caption)
+			if (i % 3 == 2) {
+				table.appendChild(row)
+				row = document.createElement("tr")
+				for (var k = 0; k < captions.length; k++) {
+					var td = document.createElement("td")
+					td.classList.add("caption")
+					td.appendChild(captions[k])
+					row.appendChild(td)
+				}
+				table.appendChild(row)
+				captions = []
+				row = document.createElement("tr")
+			}
+
+		}
+		if (captions.length != 0) {
+			table.appendChild(row)
+			row = document.createElement("tr")
+			for (var k = 0; k < captions.length; k++) {
+				var td = document.createElement("td")
+				td.classList.add("caption")
+				td.appendChild(captions[k])
+				row.appendChild(td)
+			}
+			table.appendChild(row)
+		}
+		elem.appendChild(table)
+	}
+
+	function vote(event){
+		var elem = event.srcElement
+		var id = elem.imageID
+		var action = elem.actionType
+		const http = new XMLHttpRequest();
+		var url = URL
+		url += "?id=" + id + "&" + "operation=" + action
+		http.open("GET", url);
+		http.send();
+		http.onreadystatechange = (e) => {
+			if (http.responseText.length > 0) {
+				drawContent(JSON.parse(http.responseText))
+			}
+		}
+
+	}
+
+	function newImage(event) {
+		var textbox = document.getElementById("new_image")
+		var imageURL = textbox.value
+		const http = new XMLHttpRequest();
+		var url = URL
+		url += "?id=" + imageURL + "&" + "operation=yes"
+		http.open("GET", url);
+		http.send();
+		http.onreadystatechange = (e) => {
+			if (http.responseText.length > 0) {
+				drawContent(JSON.parse(http.responseText))
+			}
+			textbox.value = ""
+		}
+
+	}
+	load()
+</script>
+<style>
+	.caption{
+		padding-bottom: 200px;
+	}
+
+</style>
