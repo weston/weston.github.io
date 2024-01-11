@@ -31,6 +31,7 @@ function processDataWithID() {
     }
 
     var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
 
     xhr.addEventListener("readystatechange", function() {
         if(this.readyState === 4) {
@@ -71,6 +72,9 @@ function handleResponse(responsePayload) {
     const seatToName = {}
     let startParsing = false;
     let counter = -1;
+    let board = ''
+    let pot = 0;
+    let rake = 0;
     const streets = ['River', 'Turn', 'Flop']
     for (const message of messages) {
         counter += 1;
@@ -83,6 +87,12 @@ function handleResponse(responsePayload) {
             console.log(seatToName)
             continue;
         }
+        if (message['messageType'] == 'PotGather') {
+            pot = parseFloat(message['messageContent']['potChips']) / 100
+            rake = parseFloat(message['messageContent']['potRakes']) / 100
+            continue;
+        }
+
 
         if (message['messageType'] == 'HoleCards') {
             startParsing = true;
@@ -110,11 +120,30 @@ function handleResponse(responsePayload) {
             table.innerHTML += `\n<tr>${completeText}</tr>`
         }
         if (message['messageType'] == 'BoardCards') {
-            table.innerHTML += `\n<tr><td><b>${streets.pop()}</b></td></tr>`
+            for (const card of message['messageContent']['cards']) {
+                board += ' ' + formatCardColor(card)
+            }
+            table.innerHTML += '\n<tr><td> </td></tr>'
+            table.innerHTML += '\n<tr><td> </td></tr>'
+            table.innerHTML += '\n<tr><td> </td></tr>'
+            table.innerHTML += `\n\n<tr><td><b>${streets.pop()}: ($${pot} - $${rake})     ${board}</b></td></tr>`
             continue;
         }
 
     }
+}
+
+function formatCardColor(card){
+    if (card.includes('d')) {
+        card = `<b style="color:blue;">${card}</b>`
+    }
+    if (card.includes('h')) {
+        card = `<b style="color:red;">${card}</b>`
+    }
+    if (card.includes('c')) {
+        card = `<b style="color:green;">${card}</b>`
+    }
+    return card;
 }
 
 function calculateTimeDifference(timestamp1, timestamp2) {
