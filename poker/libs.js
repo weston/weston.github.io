@@ -66,7 +66,6 @@ function handleResponse(responsePayload) {
         'PotGather',
         'Round',
         "NoShowCards",
-        "ShowCards",
     ]
     const seatToName = {}
     let startParsing = false;
@@ -105,6 +104,10 @@ function handleResponse(responsePayload) {
         }
         if (message['messageType'] == 'SelectionResult') {
             const content = message['messageContent']
+            const flag = content['action']['flag']
+            if (flag.includes('Show')) {
+                continue
+            }
             let chipText = ''
             if (content['action']['chip']) {
                 chipText = '$' + `${parseFloat(content['action']['chip']) / 100}`
@@ -128,7 +131,18 @@ function handleResponse(responsePayload) {
             table.innerHTML += `\n\n<tr><td><b>${streets.pop()}: ($${pot} - $${rake})     ${board}</b></td></tr>`
             continue;
         }
+        if (message['messageType'] == 'CardHand') {
+            const holeCards = message['messageContent']['holeCards']
+            const player = seatToName[message['messageContent']['seat']]
+            let cardHandString = ''
+            for (const card of holeCards) {
+                cardHandString += formatCardColor(card)
+            }
+            table.innerHTML += `<tr><td><b>${player} shows ${cardHandString}</b></td></tr>`
 
+
+
+        }
     }
 }
 
