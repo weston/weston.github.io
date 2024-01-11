@@ -17,11 +17,43 @@ function processData() {
     };
 
     xhr.onerror = function () {
-    console.error('The request failed!');
+        console.error('The request failed!');
     };
 
     xhr.send();
 }
+
+function processDataWithID() {
+    
+    const hhID = document.getElementById("hh-id-input").value;
+    if (!hhID) {
+        return
+    }
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function() {
+        if(this.readyState === 4) {
+            console.log(this.responseText);
+        }
+    });
+
+    xhr.open("GET", "https://43d0yapqnl.execute-api.us-east-2.amazonaws.com/A2/wpn_history?hand_id=" + hhID, true);
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            handleResponse(JSON.parse(xhr.responseText))
+        } else {
+            console.error('The request failed!');
+        }
+    };
+
+    xhr.onerror = function () {
+        console.error('The request failed!');
+    };
+
+    xhr.send();
+}
+
 
 function handleResponse(responsePayload) {
     const table = document.getElementById('result-table');
