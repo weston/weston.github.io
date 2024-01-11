@@ -115,9 +115,13 @@ function handleResponse(responsePayload) {
             const actionString =  `${content['action']['flag']} ${chipText}`
             const player = seatToName[content['seat']]
             const currentTS = message['dateTime']
-            const previousTS = messages[counter-1]['dateTime']
+            let previousTS = messages[counter-1]['dateTime']
+            if (messages[counter-1]['messageType'] == 'TurnSeat' && messages[counter-1]['messageContent']['status'] == 'TimeBank') {
+                previousTS = messages[counter-2]['dateTime']
+                console.log('FOUND TIMEBANK')
+            }
             const tankAmount = calculateTimeDifference(previousTS, currentTS)
-            console.log(currentTS, previousTS, tankAmount)
+            console.log(previousTS, currentTS, tankAmount)
             const completeText = `<td>${player}:</td><td>${actionString}</td><td>(${tankAmount}s)</td>`
             table.innerHTML += `\n<tr>${completeText}</tr>`
         }
