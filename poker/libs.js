@@ -23,6 +23,14 @@ function processData() {
     xhr.send();
 }
 
+function processDataWithRawData() {
+    const data = document.getElementById('hh-input-raw');
+    if (!data) {
+        return
+    }
+    handleResponse(JSON.parse(data))
+}
+
 function processDataWithID() {
     
     const hhID = document.getElementById("hh-id-input").value;
