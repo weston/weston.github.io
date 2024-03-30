@@ -24,7 +24,7 @@ function processData() {
 }
 
 function processDataWithRawData() {
-    const data = document.getElementById('hh-input-raw');
+    const data = document.getElementById('hh-input-raw').value;
     if (!data) {
         return
     }
