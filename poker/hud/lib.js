@@ -232,6 +232,8 @@ function onclickCreateNewPlayer() {
     newPlayerNameElement.value = '';
     loadPlayerList();
     document.getElementById('player-selector').value = newPlayerName;
+    db.initStats(selectedPlayer())
+    loadHud(selectedPlayer())
 }
 
 function onUpdateSelectedPlayer() {
