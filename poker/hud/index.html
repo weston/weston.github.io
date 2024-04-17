@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUD</title>
+</head>
+<body>
+    <h3>Manual Head Up Display</h3>
+    <div>
+        <select name="selected-player" id="player-selector" onchange=onUpdateSelectedPlayer()> 
+        </select>
+        <br/>
+        <input type="text" placeholder="New player name" id="new-player-name"></input>
+        <button id="new-player-button" onclick=onclickCreateNewPlayer()>Create</button>
+    </div>
+    <div id="hud"></div>
+    <div id="counters"></div>
+    <script src="./lib.js"></script>
+</body>
+
+<style>
+    .hud-element {
+        height: 100px;
+        width: 100px;
+        font-size: 15px;
+    }
+
+    .button-element-value {
+        font-weight: bolder;
+        color: blue;
+        font-size: 20px;
+    }
+</style>
+</html>
