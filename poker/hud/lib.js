@@ -112,8 +112,9 @@ class HudDb {
         this.flush()
     }
 
-    removePlayer(playerName) {
-
+    deletePlayer(playerName) {
+        delete this.data[playerName]
+        this.flush()
     }
 
     initStats(playerName) {
@@ -214,6 +215,25 @@ function loadHud(player) {
     }
     hudElement.innerHTML = ""
     hudElement.appendChild(table)
+}
+
+function onclickDeletePlayer() {
+    const selectedPlayer = document.getElementById('player-selector').value;
+    if (!selectedPlayer) {
+        return
+    }
+    const button = document.getElementById('delete-player-button');
+    console.log(button)
+    if (button.innerHTML == 'Delete') {
+        document.getElementById('delete-player-button').innerHTML = "U Sure?";
+        setTimeout(function() {
+            document.getElementById('delete-player-button').innerHTML = 'Delete';
+        }, 2000); 
+    } else if (button.innerHTML == 'U Sure?'){
+        db.deletePlayer(selectedPlayer)
+        document.getElementById('delete-player-button').innerHTML = 'Delete';
+        loadPlayerList()
+    }
 }
 
 function onclickCreateNewPlayer() {
