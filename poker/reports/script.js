@@ -98,7 +98,8 @@ async function generateHash(file) {
   const buffer = await file.arrayBuffer();
   const digest = await crypto.subtle.digest('SHA-256', buffer);
   const hashArray = Array.from(new Uint8Array(digest));
-  return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+  const hash = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+  return hash.slice(0, fileHash.length / 4);
 }
 
 // Poll for the file in the S3 bucket
@@ -130,7 +131,7 @@ function pollForFile() {
       spinner.style.display = 'none'; // Hide spinner on error
       waitingMessage.style.display = 'none'; // Hide waiting message on error
     }
-  }, 5000); // Poll every 5 seconds
+  }, 1000); // Poll every second
 }
 
 // Helper function to download the file
