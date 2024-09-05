@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload PT4 Hand Report</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Password Protection -->
+  <div class="password-container">
+    <input type="password" id="passwordInput" placeholder="Enter password" oninput="checkPassword()" />
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <h3>Upload a PT4 Hand Report</h3>
+
+    <!-- File input -->
+    <label for="csvFile">Select CSV File:</label>
+    <input type="file" id="csvFile" accept=".csv" /><br />
+
+    <!-- Index Selector -->
+    <label for="position">Select Index:</label>
+    <select id="position">
+      <option value="first">First</option>
+      <option value="second">Second</option>
+      <option value="third">Third</option>
+      <option value="last">Last</option>
+    </select>
+
+    <!-- Action Selector -->
+    <label for="action">Select Action:</label>
+    <select id="action">
+      <option value="bet">Bet</option>
+      <option value="raise">Raise</option>
+      <option value="fold">Fold</option>
+      <option value="check">Check</option>
+      <option value="call">Call</option>
+      <option value="any">Any</option>
+    </select>
+
+    <!-- Street Selector -->
+    <label for="street">Select Street:</label>
+    <select id="street">
+      <option value="preflop">Preflop</option>
+      <option value="flop">Flop</option>
+      <option value="turn">Turn</option>
+      <option value="river">River</option>
+    </select>
+
+    <!-- Upload Button -->
+    <button onclick="uploadCsv()">Upload Report</button>
+
+    <!-- Spinner -->
+    <div class="spinner" id="spinner"></div>
+
+    <!-- Waiting message -->
+    <div id="waitingMessage" style="display: none;">File uploaded. Waiting for the file to be ready for download...
+    </div>
+
+    <!-- Done message -->
+    <div id="doneMessage" style="display: none;">Done</div>
+
+    <!-- Hash Display Area -->
+    <div id="hashDisplay" class="hash-display" style="display:none;"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
