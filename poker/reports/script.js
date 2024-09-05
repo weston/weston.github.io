@@ -99,7 +99,7 @@ async function generateHash(file) {
   const digest = await crypto.subtle.digest('SHA-256', buffer);
   const hashArray = Array.from(new Uint8Array(digest));
   const hash = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-  return hash.slice(0, fileHash.length / 4);
+  return hash.slice(0, hash.length / 4);
 }
 
 // Poll for the file in the S3 bucket
