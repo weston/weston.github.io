@@ -1,6 +1,7 @@
+/* General Styles */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f4f9;
   margin: 0;
   padding: 20px;
   display: flex;
@@ -12,51 +13,66 @@ body {
 .container,
 .password-container {
   background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   padding: 30px;
   max-width: 600px;
   width: 100%;
   text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 h3 {
   color: #333;
-  font-size: 24px;
+  font-size: 26px;
   margin-bottom: 20px;
+  font-weight: 500;
 }
 
 label {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
-  color: #555;
+  color: #666;
   text-align: left;
+  font-size: 16px;
 }
 
 input[type="file"],
 select,
 input[type="password"] {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 20px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
+  background-color: #f7f9fc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+input[type="file"]:hover,
+select:hover,
+input[type="password"]:hover {
+  border-color: #3498db;
 }
 
 button {
-  background-color: #4CAF50;
+  background-color: #3498db;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 25px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #2980b9;
+  transform: translateY(-2px);
 }
 
 .hash-display {
@@ -64,18 +80,18 @@ button:hover {
   font-weight: bold;
   color: #333;
   background-color: #f0f0f0;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 15px;
+  border-radius: 10px;
   word-wrap: break-word;
 }
 
 /* Spinner Styles */
 .spinner {
-  border: 5px solid #f3f3f3;
+  border: 5px solid rgba(0, 0, 0, 0.1);
   border-top: 5px solid #3498db;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   animation: spin 1s linear infinite;
   margin: 20px auto;
   display: none;
@@ -88,6 +104,18 @@ button:hover {
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
