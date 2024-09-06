@@ -11,12 +11,12 @@ function checkPassword() {
     document.querySelector('.container').style.display = 'block';
   }
 }
-
 async function uploadCsv() {
   const fileInput = document.getElementById('csvFile');
   const index = document.getElementById('position').value;
   const action = document.getElementById('action').value;
   const street = document.getElementById('street').value;
+  const player = document.getElementById('player').value; // Get selected player
   const hashDisplay = document.getElementById('hashDisplay');
   const spinner = document.getElementById('spinner');
   const waitingMessage = document.getElementById('waitingMessage');
@@ -37,8 +37,8 @@ async function uploadCsv() {
   // Generate the hash for the filename
   const fileHash = await generateHash(file);
 
-  // Construct the complete filename
-  fullFileName = `${fileHash}_${street}_${action}_${index}.csv`;
+  // Construct the complete filename, now including the selected player
+  fullFileName = `${fileHash}_${street}_${action}_${index}_${player}.csv`;
 
   // Convert the file to base64
   const base64File = await fileToBase64(file);
