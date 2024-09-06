@@ -1,4 +1,7 @@
 let fullFileName = ''; // Store the complete filename for polling
+let originalFileName = ''; // Store the original filename
+let fileDownloaded = false; // Track whether the file has been downloaded
+let pollingInterval = null; // To track polling interval
 
 // Password protection logic
 function checkPassword() {
@@ -11,12 +14,15 @@ function checkPassword() {
     document.querySelector('.container').style.display = 'block';
   }
 }
+
 async function uploadCsv() {
+  resetState(); // Reset variables for a fresh upload
+
   const fileInput = document.getElementById('csvFile');
   const index = document.getElementById('position').value;
   const action = document.getElementById('action').value;
   const street = document.getElementById('street').value;
-  const player = document.getElementById('player').value; // Get selected player
+  const player = document.getElementById('player').value;
   const hashDisplay = document.getElementById('hashDisplay');
   const spinner = document.getElementById('spinner');
   const waitingMessage = document.getElementById('waitingMessage');
@@ -28,6 +34,7 @@ async function uploadCsv() {
   }
 
   const file = fileInput.files[0];
+  originalFileName = file.name; // Capture the original file name
 
   // Show spinner and waiting message
   spinner.style.display = 'block';
@@ -37,8 +44,8 @@ async function uploadCsv() {
   // Generate the hash for the filename
   const fileHash = await generateHash(file);
 
-  // Construct the complete filename, now including the selected player
-  fullFileName = `${fileHash}_${street}_${action}_${index}_${player}.csv`;
+  // Construct the complete filename, now including the selected player and original file name
+  fullFileName = `${fileHash}_${street}_${action}_${index}_${player}_${originalFileName}`;
 
   // Convert the file to base64
   const base64File = await fileToBase64(file);
@@ -80,6 +87,60 @@ async function uploadCsv() {
   }
 }
 
+// Poll for the file in the S3 bucket
+function pollForFile() {
+  const checkFileUrl = `https://4ni4eh3zreniodbuzao4e2pj6i0sfrhy.lambda-url.us-east-1.on.aws/?filename=${encodeURIComponent(fullFileName)}`;
+  const spinner = document.getElementById('spinner');
+  const waitingMessage = document.getElementById('waitingMessage');
+  const doneMessage = document.getElementById('doneMessage');
+
+  pollingInterval = setInterval(async () => {
+    if (fileDownloaded) {
+      clearInterval(pollingInterval); // Stop polling if the file has already been downloaded
+      return;
+    }
+
+    try {
+      const response = await fetch(checkFileUrl);
+      if (response.ok) {
+        const fileContent = await response.text();
+        // File is found, download it
+        downloadFile(fileContent, fullFileName);
+        clearInterval(pollingInterval); // Stop polling
+        waitingMessage.style.display = 'none'; // Hide waiting message
+        spinner.style.display = 'none'; // Hide spinner
+        doneMessage.style.display = 'block'; // Show "Done"
+        fileDownloaded = true; // Set fileDownloaded flag to true after downloading
+      } else if (response.status === 404) {
+        console.log('File not found yet. Polling...');
+      } else {
+        throw new Error('Error checking file');
+      }
+    } catch (error) {
+      console.error('Error checking for file:', error);
+      clearInterval(pollingInterval); // Stop polling on error
+      spinner.style.display = 'none'; // Hide spinner on error
+      waitingMessage.style.display = 'none'; // Hide waiting message on error
+    }
+  }, 1000); // Poll every second
+}
+
+// Helper function to download the file
+function downloadFile(content, fileName) {
+  if (fileDownloaded) {
+    return; // Prevent downloading multiple copies
+  }
+  const blob = new Blob([content], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  fileDownloaded = true; // Mark file as downloaded after downloading
+}
+
 // Helper function to convert file to base64
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -99,48 +160,25 @@ async function generateHash(file) {
   const digest = await crypto.subtle.digest('SHA-256', buffer);
   const hashArray = Array.from(new Uint8Array(digest));
   const hash = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-  return hash.slice(0, hash.length / 4);
+  return hash.slice(0, hash.length / 4); // Using part of the hash for brevity
 }
 
-// Poll for the file in the S3 bucket
-function pollForFile() {
-  const checkFileUrl = `https://4ni4eh3zreniodbuzao4e2pj6i0sfrhy.lambda-url.us-east-1.on.aws/?filename=${encodeURIComponent(fullFileName)}`;
-  const spinner = document.getElementById('spinner');
-  const waitingMessage = document.getElementById('waitingMessage');
-  const doneMessage = document.getElementById('doneMessage');
+// Helper function to reset the state for a fresh upload
+function resetState() {
+  // Reset relevant variables
+  fileDownloaded = false;
+  fullFileName = '';
+  originalFileName = '';
 
-  const intervalId = setInterval(async () => {
-    try {
-      const response = await fetch(checkFileUrl);
-      if (response.ok) {
-        const fileContent = await response.text();
-        // File is found, download it
-        downloadFile(fileContent, fullFileName);
-        clearInterval(intervalId); // Stop polling
-        waitingMessage.style.display = 'none'; // Hide waiting message
-        spinner.style.display = 'none'; // Hide spinner
-        doneMessage.style.display = 'block'; // Show "Done"
-      } else if (response.status === 404) {
-        console.log('File not found yet. Polling...');
-      } else {
-        throw new Error('Error checking file');
-      }
-    } catch (error) {
-      console.error('Error checking for file:', error);
-      clearInterval(intervalId); // Stop polling on error
-      spinner.style.display = 'none'; // Hide spinner on error
-      waitingMessage.style.display = 'none'; // Hide waiting message on error
-    }
-  }, 1000); // Poll every second
-}
+  // Clear previous polling if it was still running
+  if (pollingInterval !== null) {
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
 
-// Helper function to download the file
-function downloadFile(content, fileName) {
-  const blob = new Blob([content], { type: 'text/csv' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  // Optionally clear UI elements
+  document.getElementById('hashDisplay').style.display = 'none';
+  document.getElementById('spinner').style.display = 'none';
+  document.getElementById('waitingMessage').style.display = 'none';
+  document.getElementById('doneMessage').style.display = 'none';
 }
