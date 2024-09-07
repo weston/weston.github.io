@@ -19,6 +19,7 @@ async function uploadCsv() {
   resetState(); // Reset variables for a fresh upload
 
   const fileInput = document.getElementById('csvFile');
+  const accessKeyInput = document.getElementById('accessKey').value; // Get Access Key input
   const index = document.getElementById('position').value;
   const action = document.getElementById('action').value;
   const street = document.getElementById('street').value;
@@ -27,6 +28,11 @@ async function uploadCsv() {
   const spinner = document.getElementById('spinner');
   const waitingMessage = document.getElementById('waitingMessage');
   const doneMessage = document.getElementById('doneMessage');
+
+  if (!accessKeyInput) {
+    alert('Please enter the Access Key.');
+    return;
+  }
 
   if (fileInput.files.length === 0) {
     alert('Please select a CSV file.');
@@ -57,7 +63,8 @@ async function uploadCsv() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'file-name': fullFileName
+        'file-name': fullFileName,
+        'access-key': accessKeyInput  // Include Access Key in headers
       },
       body: JSON.stringify({
         isBase64Encoded: true,
