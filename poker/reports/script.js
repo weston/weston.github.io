@@ -53,44 +53,53 @@ async function uploadCsv() {
   // Construct the complete filename, now including the selected player and original file name
   fullFileName = `${fileHash}_${street}_${action}_${index}_${player}_${originalFileName}`;
 
-  // Convert the file to base64
-  const base64File = await fileToBase64(file);
-
-  const apiEndpoint = 'https://f2mq53hegotvsezb7a4n5wxbde0ituuk.lambda-url.us-east-1.on.aws/'; // Your API URL
+  const apiEndpoint = 'https://z4sarh2go5anhnwdtx7wugxkqi0rsall.lambda-url.us-east-1.on.aws/'; // Your Lambda URL
 
   try {
+    // Request the pre-signed URL from the Lambda function
     const response = await fetch(apiEndpoint, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'file-name': fullFileName,
-        'access-key': accessKeyInput  // Include Access Key in headers
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        isBase64Encoded: true,
-        body: base64File,
-        index: index,
-        action: action,
-        street: street
+        access_key: accessKeyInput, // Pass the access key
+        file_name: fullFileName     // Pass the full file name
       })
     });
 
-    if (response.ok) {
-      // Show hash display and keep waiting message + spinner
-      hashDisplay.textContent = `File Name: ${fullFileName}`;
-      hashDisplay.style.display = 'block';
-
-      // Start polling to check if the file exists
-      pollForFile();
-    } else {
-      console.error('Upload failed:', await response.json());
-      spinner.style.display = 'none'; // Hide spinner on failure
-      waitingMessage.style.display = 'none'; // Hide waiting message on failure
+    if (!response.ok) {
+      throw new Error('Failed to get the pre-signed URL');
     }
+
+    const data = await response.json();
+    const uploadUrl = data.upload_url; // The pre-signed URL
+
+    // Upload the file to the pre-signed URL
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: {
+        'Content-Type': file.type
+      }
+    });
+
+    if (!uploadResponse.ok) {
+      console.log(uploadResponse.text())
+      throw new Error('Failed to upload the file');
+    }
+
+    // Show hash display and keep waiting message + spinner
+    hashDisplay.textContent = `File Name: ${fullFileName}`;
+    hashDisplay.style.display = 'block';
+
+    // Start polling to check if the file exists
+    pollForFile();
+
   } catch (error) {
     console.error('Error:', error);
-    spinner.style.display = 'none'; // Hide spinner on error
-    waitingMessage.style.display = 'none'; // Hide waiting message on error
+    spinner.style.display = 'none'; // Hide spinner on failure
+    waitingMessage.style.display = 'none'; // Hide waiting message on failure
   }
 }
 
@@ -108,11 +117,14 @@ function pollForFile() {
     }
 
     try {
+      // Make a request to the Lambda function to check if the file exists
       const response = await fetch(checkFileUrl);
       if (response.ok) {
-        const fileContent = await response.text();
+        const data = await response.json();
+        const downloadUrl = data.download_url;
+
         // File is found, download it
-        downloadFile(fileContent, fullFileName);
+        downloadFileFromS3(downloadUrl, fullFileName);
         clearInterval(pollingInterval); // Stop polling
         waitingMessage.style.display = 'none'; // Hide waiting message
         spinner.style.display = 'none'; // Hide spinner
@@ -129,17 +141,13 @@ function pollForFile() {
       spinner.style.display = 'none'; // Hide spinner on error
       waitingMessage.style.display = 'none'; // Hide waiting message on error
     }
-  }, 1000); // Poll every second
+  }, 3000); // Poll every 3 seconds
 }
 
-// Helper function to download the file
-function downloadFile(content, fileName) {
-  if (fileDownloaded) {
-    return; // Prevent downloading multiple copies
-  }
-  const blob = new Blob([content], { type: 'text/csv' });
+// Helper function to download the file from S3 using the pre-signed URL
+function downloadFileFromS3(url, fileName) {
   const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
+  link.href = url;
   link.download = fileName;
   document.body.appendChild(link);
   link.click();
@@ -147,7 +155,6 @@ function downloadFile(content, fileName) {
 
   fileDownloaded = true; // Mark file as downloaded after downloading
 }
-
 // Helper function to convert file to base64
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
