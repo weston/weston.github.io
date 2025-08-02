@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual HUD v2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .profile-select {
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            min-width: 150px;
+        }
+
+        .profile-select option {
+            background: #34495e;
+            color: white;
+        }
+
+        .title {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .mode-toggle {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .mode-toggle:hover {
+            background: #2980b9;
+        }
+
+        .mode-toggle.edit-mode {
+            background: #e74c3c;
+        }
+
+        .mode-toggle.edit-mode:hover {
+            background: #c0392b;
+        }
+
+        .button-groups {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .button-group {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .group-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .group-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 2px 4px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 0.6rem;
+            transition: background 0.3s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-button {
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 15px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            position: relative;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .stat-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-button .label {
+            margin-bottom: 5px;
+        }
+
+        .stat-button .percentage {
+            font-size: 1.2rem;
+            font-weight: bold;
+            opacity: 1;
+        }
+
+        .stat-button .stats {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .edit-controls {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: none;
+            gap: 2px;
+        }
+
+        body.edit-mode .edit-controls {
+            display: flex;
+        }
+
+        .edit-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 2px 4px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 0.6rem;
+            transition: background 0.3s;
+        }
+
+        .edit-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .add-group-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+
+        .add-group-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group input[type="color"] {
+            width: 50px;
+            height: 40px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .drag-handle {
+            cursor: move;
+            padding: 2px 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 2px;
+            font-size: 0.7rem;
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
+
+        .drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            text-align: center;
+            color: #666;
+        }
+
+        .button-drop-zone {
+            padding: 5px;
+            margin: 2px 0;
+            font-size: 0.8rem;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drop-zone.active {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .button-group.drop-target {
+            border: 2px dashed #3498db;
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .stat-button.drop-target {
+            border: 2px dashed #3498db;
+            background: rgba(52, 152, 219, 0.2) !important;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Manual HUD v2</h1>
+            <div class="profile-controls">
+                <select id="profileSelect" class="profile-select">
+                    <option value="">Select Profile</option>
+                </select>
+                <button id="newProfileBtn" class="btn btn-secondary">New Profile</button>
+                <button id="exportBtn" class="btn btn-secondary">Export</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+                <button id="importBtn" class="btn btn-secondary">Import</button>
+            </div>
+            <button class="mode-toggle" id="modeToggle">Edit Mode</button>
+        </div>
+
+        <div class="button-groups" id="buttonGroups">
+            <!-- Button groups will be dynamically generated here -->
+        </div>
+
+        <div class="add-group-btn" id="addGroupBtn" style="display: none;">
+            + Add New Group
+        </div>
+    </div>
+
+    <!-- Modal for editing -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Edit Item</h2>
+                <span class="close" id="closeModal">&times;</span>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editLabel">Label:</label>
+                    <input type="text" id="editLabel" required>
+                </div>
+                <div class="form-group">
+                    <label for="editNumerator">Click Count:</label>
+                    <input type="number" id="editNumerator" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="editColor">Color:</label>
+                    <input type="color" id="editColor">
+                </div>
+                <div class="form-group">
+                    <label for="editSize">Size:</label>
+                    <select id="editSize">
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for group editing -->
+    <div class="modal" id="groupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="groupModalTitle">Edit Group</h2>
+                <span class="close" id="closeGroupModal">&times;</span>
+            </div>
+            <form id="groupForm">
+                <div class="form-group">
+                    <label for="groupTitle">Group Title:</label>
+                    <input type="text" id="groupTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="groupColor">Group Color:</label>
+                    <input type="color" id="groupColor">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelGroupEdit">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for new profile -->
+    <div class="modal" id="newProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Profile</h2>
+                <span class="close" id="closeNewProfileModal">&times;</span>
+            </div>
+            <form id="newProfileForm">
+                <div class="form-group">
+                    <label for="profileName">Profile Name:</label>
+                    <input type="text" id="profileName" required>
+                </div>
+                <div class="form-group">
+                    <label for="copyFromProfile">Copy Layout From (Optional):</label>
+                    <select id="copyFromProfile">
+                        <option value="">No copy - Start fresh</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelNewProfile">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="libs.js"></script>
+</body>
+
+</html>
