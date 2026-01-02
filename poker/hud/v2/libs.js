@@ -7,6 +7,9 @@ class StatisticTracker {
         this.currentEditItem = null;
         this.currentEditGroup = null;
         this.draggedElement = null;
+        this.isReorderMode = false;
+        this.draggedProfileItem = null;
+        this.reorderPlaceholder = null;
 
         this.init();
     }
@@ -24,13 +27,20 @@ class StatisticTracker {
         if (saved) {
             const profiles = JSON.parse(saved);
 
-            // Ensure backward compatibility: add notes and notesCollapsed fields if missing
+            // Ensure backward compatibility: add notes, notesCollapsed, and order fields if missing
+            let maxOrder = 0;
             Object.values(profiles).forEach(profile => {
                 if (profile.notes === undefined) {
                     profile.notes = '';
                 }
                 if (profile.notesCollapsed === undefined) {
                     profile.notesCollapsed = false;
+                }
+                if (profile.order === undefined) {
+                    // Assign order based on existing order or use a high number
+                    profile.order = maxOrder++;
+                } else {
+                    maxOrder = Math.max(maxOrder, profile.order + 1);
                 }
             });
 
@@ -49,7 +59,8 @@ class StatisticTracker {
                 name: 'Default',
                 config: this.getDefaultConfig(),
                 notes: '',
-                notesCollapsed: false
+                notesCollapsed: false,
+                order: 0
             }
         };
     }
@@ -142,6 +153,10 @@ class StatisticTracker {
             this.deleteProfile();
         });
 
+        document.getElementById('reorderProfilesBtn').addEventListener('click', () => {
+            this.toggleReorderMode();
+        });
+
         // New profile modal
         document.getElementById('closeNewProfileModal').addEventListener('click', () => {
             this.closeNewProfileModal();
@@ -220,13 +235,37 @@ class StatisticTracker {
                 this.draggedElement = e.target;
                 e.target.classList.add('dragging');
                 e.dataTransfer.effectAllowed = 'move';
+            } else if (e.target.classList.contains('reorder-item') || e.target.closest('.reorder-item')) {
+                const item = e.target.classList.contains('reorder-item') ? e.target : e.target.closest('.reorder-item');
+                this.draggedProfileItem = item;
+                item.classList.add('dragging');
+                // Make dragged item semi-transparent
+                item.style.opacity = '0.5';
+                e.dataTransfer.effectAllowed = 'move';
             }
         });
 
         document.addEventListener('dragend', (e) => {
             if (e.target.classList.contains('dragging')) {
                 e.target.classList.remove('dragging');
+                e.target.style.opacity = '';
                 this.draggedElement = null;
+            }
+            if (this.draggedProfileItem) {
+                this.draggedProfileItem.classList.remove('dragging');
+                this.draggedProfileItem.style.opacity = '';
+                // Remove all drag-related classes
+                document.querySelectorAll('.reorder-item').forEach(item => {
+                    item.classList.remove('drop-target', 'drag-over', 'drag-over-above');
+                    item.style.marginTop = '';
+                    item.style.marginBottom = '';
+                });
+                // Remove placeholder if it exists
+                if (this.reorderPlaceholder && this.reorderPlaceholder.parentNode) {
+                    this.reorderPlaceholder.parentNode.removeChild(this.reorderPlaceholder);
+                }
+                this.reorderPlaceholder = null;
+                this.draggedProfileItem = null;
             }
         });
 
@@ -235,6 +274,8 @@ class StatisticTracker {
             const dropZone = e.target.closest('.drop-zone');
             const buttonGroup = e.target.closest('.button-group');
             const statButton = e.target.closest('.stat-button');
+            const reorderItem = e.target.closest('.reorder-item');
+            const reorderList = document.getElementById('reorderList');
 
             if (dropZone) {
                 dropZone.classList.add('active');
@@ -249,12 +290,18 @@ class StatisticTracker {
             if (statButton && this.draggedElement && this.draggedElement.classList.contains('stat-button')) {
                 statButton.classList.add('drop-target');
             }
+
+            // Handle profile reordering with visual feedback
+            if (reorderItem && this.draggedProfileItem && reorderItem !== this.draggedProfileItem && reorderList) {
+                this.handleProfileReorderDragOver(e, reorderItem, reorderList);
+            }
         });
 
         document.addEventListener('dragleave', (e) => {
             const dropZone = e.target.closest('.drop-zone');
             const buttonGroup = e.target.closest('.button-group');
             const statButton = e.target.closest('.stat-button');
+            const reorderItem = e.target.closest('.reorder-item');
 
             if (dropZone) {
                 dropZone.classList.remove('active');
@@ -267,6 +314,12 @@ class StatisticTracker {
             if (statButton) {
                 statButton.classList.remove('drop-target');
             }
+
+            if (reorderItem) {
+                reorderItem.classList.remove('drop-target', 'drag-over', 'drag-over-above');
+                reorderItem.style.marginTop = '';
+                reorderItem.style.marginBottom = '';
+            }
         });
 
         document.addEventListener('drop', (e) => {
@@ -274,6 +327,8 @@ class StatisticTracker {
             const dropZone = e.target.closest('.drop-zone');
             const buttonGroup = e.target.closest('.button-group');
             const statButton = e.target.closest('.stat-button');
+            const reorderItem = e.target.closest('.reorder-item');
+            const reorderList = e.target.closest('#reorderList');
 
             if (dropZone && this.draggedElement) {
                 this.handleDrop(dropZone, this.draggedElement);
@@ -284,12 +339,25 @@ class StatisticTracker {
             } else if (statButton && this.draggedElement && this.draggedElement.classList.contains('stat-button')) {
                 this.handleButtonDrop(statButton, this.draggedElement);
                 statButton.classList.remove('drop-target');
+            } else if (this.draggedProfileItem) {
+                if (reorderItem && reorderItem !== this.draggedProfileItem) {
+                    this.handleProfileReorderDrop(reorderItem, this.draggedProfileItem);
+                    reorderItem.classList.remove('drop-target', 'drag-over', 'drag-over-above');
+                } else if (reorderList && this.reorderPlaceholder) {
+                    // Drop on the list container itself - use placeholder position
+                    this.handleProfileReorderDrop(null, this.draggedProfileItem);
+                }
             }
         });
     }
 
     toggleEditMode() {
         this.isEditMode = !this.isEditMode;
+        if (!this.isEditMode) {
+            // Exit reorder mode when exiting edit mode
+            this.isReorderMode = false;
+            this.updateReorderList();
+        }
         this.updateModeDisplay();
         this.render();
     }
@@ -758,7 +826,14 @@ class StatisticTracker {
         const select = document.getElementById('profileSelect');
         select.innerHTML = '<option value="">Select Profile</option>';
 
-        Object.values(this.profiles).forEach(profile => {
+        // Sort profiles by order
+        const sortedProfiles = Object.values(this.profiles).sort((a, b) => {
+            const orderA = a.order !== undefined ? a.order : 999999;
+            const orderB = b.order !== undefined ? b.order : 999999;
+            return orderA - orderB;
+        });
+
+        sortedProfiles.forEach(profile => {
             const option = document.createElement('option');
             option.value = profile.id;
             option.textContent = profile.name;
@@ -767,6 +842,211 @@ class StatisticTracker {
             }
             select.appendChild(option);
         });
+
+        // Update reorder list if in reorder mode
+        if (this.isReorderMode) {
+            this.updateReorderList();
+        }
+    }
+
+    toggleReorderMode() {
+        this.isReorderMode = !this.isReorderMode;
+        this.updateReorderList();
+    }
+
+    updateReorderList() {
+        const reorderList = document.getElementById('reorderList');
+        const reorderBtn = document.getElementById('reorderProfilesBtn');
+
+        if (this.isReorderMode && this.isEditMode) {
+            reorderList.classList.add('active');
+            reorderBtn.textContent = 'Done Reordering';
+            this.renderReorderList();
+        } else {
+            reorderList.classList.remove('active');
+            reorderBtn.textContent = 'Reorder Profiles';
+        }
+    }
+
+    renderReorderList() {
+        const reorderList = document.getElementById('reorderList');
+        reorderList.innerHTML = '';
+
+        // Sort profiles by order
+        const sortedProfiles = Object.values(this.profiles).sort((a, b) => {
+            const orderA = a.order !== undefined ? a.order : 999999;
+            const orderB = b.order !== undefined ? b.order : 999999;
+            return orderA - orderB;
+        });
+
+        sortedProfiles.forEach(profile => {
+            const item = document.createElement('div');
+            item.className = 'reorder-item';
+            item.draggable = true;
+            item.dataset.profileId = profile.id;
+            
+            if (profile.id === this.currentProfileId) {
+                item.classList.add('current');
+            }
+
+            item.innerHTML = `
+                <span class="reorder-handle">☰</span>
+                <span class="reorder-item-name">${profile.name}</span>
+            `;
+
+            reorderList.appendChild(item);
+        });
+    }
+
+    handleProfileReorderDragOver(e, targetItem, reorderList) {
+        const targetProfileId = targetItem.dataset.profileId;
+        const draggedProfileId = this.draggedProfileItem.dataset.profileId;
+
+        if (targetProfileId === draggedProfileId) {
+            return;
+        }
+
+        // Get all items excluding the dragged one
+        const allItems = Array.from(reorderList.querySelectorAll('.reorder-item:not(.dragging)'));
+        const targetIndex = allItems.indexOf(targetItem);
+        
+        if (targetIndex === -1) {
+            return;
+        }
+
+        // Determine if we're dragging above or below the target
+        const rect = targetItem.getBoundingClientRect();
+        const mouseY = e.clientY;
+        const targetMiddle = rect.top + rect.height / 2;
+        const insertAbove = mouseY < targetMiddle;
+
+        // Calculate where the placeholder should go
+        let insertPosition = insertAbove ? targetIndex : targetIndex + 1;
+
+        // Remove placeholder if it exists
+        if (this.reorderPlaceholder && this.reorderPlaceholder.parentNode) {
+            const oldPosition = Array.from(reorderList.querySelectorAll('.reorder-item:not(.dragging)'))
+                .indexOf(this.reorderPlaceholder.previousElementSibling);
+            if (oldPosition !== -1 && oldPosition === insertPosition) {
+                // Position hasn't changed, don't recreate placeholder
+                return;
+            }
+            this.reorderPlaceholder.parentNode.removeChild(this.reorderPlaceholder);
+        }
+
+        // Create placeholder with same height as dragged item
+        this.reorderPlaceholder = document.createElement('div');
+        this.reorderPlaceholder.className = 'reorder-placeholder';
+        const draggedRect = this.draggedProfileItem.getBoundingClientRect();
+        this.reorderPlaceholder.style.height = `${draggedRect.height}px`;
+        this.reorderPlaceholder.style.minHeight = `${draggedRect.height}px`;
+
+        // Remove all drag-over classes and reset margins
+        allItems.forEach(item => {
+            item.classList.remove('drag-over', 'drag-over-above');
+            item.style.marginTop = '';
+            item.style.marginBottom = '';
+        });
+
+        // Insert placeholder at the correct position
+        if (insertPosition === 0) {
+            reorderList.insertBefore(this.reorderPlaceholder, allItems[0] || null);
+        } else if (insertPosition >= allItems.length) {
+            reorderList.appendChild(this.reorderPlaceholder);
+        } else {
+            reorderList.insertBefore(this.reorderPlaceholder, allItems[insertPosition]);
+        }
+    }
+
+    handleProfileReorderDrop(targetItem, draggedItem) {
+        const draggedProfileId = draggedItem.dataset.profileId;
+        const reorderList = document.getElementById('reorderList');
+
+        if (!this.reorderPlaceholder || !reorderList) {
+            // Fallback to old method if no placeholder
+            if (!targetItem) {
+                return;
+            }
+            const targetProfileId = targetItem.dataset.profileId;
+            if (targetProfileId === draggedProfileId) {
+                return;
+            }
+
+            const sortedProfiles = Object.values(this.profiles).sort((a, b) => {
+                const orderA = a.order !== undefined ? a.order : 999999;
+                const orderB = b.order !== undefined ? b.order : 999999;
+                return orderA - orderB;
+            });
+
+            const draggedIndex = sortedProfiles.findIndex(p => p.id === draggedProfileId);
+            const targetIndex = sortedProfiles.findIndex(p => p.id === targetProfileId);
+
+            if (draggedIndex === -1 || targetIndex === -1) {
+                return;
+            }
+
+            const [draggedProfile] = sortedProfiles.splice(draggedIndex, 1);
+            sortedProfiles.splice(targetIndex, 0, draggedProfile);
+
+            sortedProfiles.forEach((profile, index) => {
+                profile.order = index;
+            });
+
+            this.saveProfiles();
+            this.updateProfileSelector();
+            this.renderReorderList();
+            return;
+        }
+
+        // Use placeholder position to determine new order
+        const allItems = Array.from(reorderList.querySelectorAll('.reorder-item'));
+        const placeholderIndex = Array.from(reorderList.children).indexOf(this.reorderPlaceholder);
+        
+        // Count how many reorder items come before the placeholder
+        let newIndex = 0;
+        for (let i = 0; i < placeholderIndex; i++) {
+            if (reorderList.children[i].classList.contains('reorder-item')) {
+                newIndex++;
+            }
+        }
+
+        // Get sorted profiles by current order
+        const sortedProfiles = Object.values(this.profiles).sort((a, b) => {
+            const orderA = a.order !== undefined ? a.order : 999999;
+            const orderB = b.order !== undefined ? b.order : 999999;
+            return orderA - orderB;
+        });
+
+        const draggedIndex = sortedProfiles.findIndex(p => p.id === draggedProfileId);
+        if (draggedIndex === -1) {
+            return;
+        }
+
+        // Remove from current position
+        const [draggedProfile] = sortedProfiles.splice(draggedIndex, 1);
+        
+        // Adjust newIndex if we're moving from before to after
+        if (draggedIndex < newIndex) {
+            newIndex--;
+        }
+        
+        // Insert at new position
+        sortedProfiles.splice(newIndex, 0, draggedProfile);
+
+        // Reassign orders based on new positions
+        sortedProfiles.forEach((profile, index) => {
+            profile.order = index;
+        });
+
+        // Remove placeholder
+        if (this.reorderPlaceholder && this.reorderPlaceholder.parentNode) {
+            this.reorderPlaceholder.parentNode.removeChild(this.reorderPlaceholder);
+        }
+        this.reorderPlaceholder = null;
+
+        this.saveProfiles();
+        this.updateProfileSelector();
+        this.renderReorderList();
     }
 
     switchProfile(profileId) {
@@ -780,6 +1060,14 @@ class StatisticTracker {
             }
             if (this.profiles[profileId].notesCollapsed === undefined) {
                 this.profiles[profileId].notesCollapsed = false;
+            }
+            if (this.profiles[profileId].order === undefined) {
+                // Assign a high order number for backward compatibility
+                const maxOrder = Math.max(...Object.values(this.profiles).map(p => p.order !== undefined ? p.order : -1), -1);
+                this.profiles[profileId].order = maxOrder + 1;
+            }
+            if (this.isReorderMode) {
+                this.renderReorderList();
             }
             this.render();
         }
@@ -830,12 +1118,16 @@ class StatisticTracker {
             config = this.getDefaultConfig();
         }
 
+        // Get the maximum order to add new profile at the end
+        const maxOrder = Math.max(...Object.values(this.profiles).map(p => p.order !== undefined ? p.order : -1), -1);
+
         this.profiles[newProfileId] = {
             id: newProfileId,
             name: name,
             config: config,
             notes: '',
-            notesCollapsed: false
+            notesCollapsed: false,
+            order: maxOrder + 1
         };
 
         this.saveProfiles();
@@ -939,13 +1231,19 @@ class StatisticTracker {
                 if (confirm(message)) {
                     this.profiles = importData.profiles;
                     
-                    // Ensure backward compatibility: add notes and notesCollapsed fields if missing
+                    // Ensure backward compatibility: add notes, notesCollapsed, and order fields if missing
+                    let maxOrder = 0;
                     Object.values(this.profiles).forEach(profile => {
                         if (profile.notes === undefined) {
                             profile.notes = '';
                         }
                         if (profile.notesCollapsed === undefined) {
                             profile.notesCollapsed = false;
+                        }
+                        if (profile.order === undefined) {
+                            profile.order = maxOrder++;
+                        } else {
+                            maxOrder = Math.max(maxOrder, profile.order + 1);
                         }
                     });
                     

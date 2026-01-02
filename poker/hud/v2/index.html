@@ -56,6 +56,131 @@
             color: white;
         }
 
+        .profile-reorder {
+            display: none;
+        }
+
+        body.edit-mode .profile-reorder {
+            display: block;
+        }
+
+        #deleteProfileBtn {
+            display: none;
+        }
+
+        body.edit-mode #deleteProfileBtn {
+            display: block;
+        }
+
+        #newProfileBtn,
+        #exportBtn,
+        #importBtn {
+            display: block;
+        }
+
+        body.edit-mode #newProfileBtn,
+        body.edit-mode #exportBtn,
+        body.edit-mode #importBtn {
+            display: none;
+        }
+
+        .reorder-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .reorder-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .reorder-list {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            backdrop-filter: blur(10px);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .reorder-list.active {
+            display: block;
+        }
+
+        .reorder-item {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .reorder-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .reorder-item.dragging {
+            opacity: 0.5;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+        }
+
+        .reorder-item.drop-target {
+            border: 2px dashed #3498db;
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .reorder-item.drag-over {
+            margin-top: 50px;
+            transition: margin-top 0.15s ease;
+        }
+
+        .reorder-item.drag-over-above {
+            margin-bottom: 50px;
+            transition: margin-bottom 0.15s ease;
+        }
+
+        .reorder-placeholder {
+            height: 0;
+            min-height: 0;
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px dashed #3498db;
+            border-radius: 5px;
+            margin: 5px 0;
+            padding: 10px 15px;
+            box-sizing: border-box;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .reorder-handle {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .reorder-item-name {
+            flex: 1;
+        }
+
+        .reorder-item.current {
+            border-left: 4px solid #3498db;
+            background: rgba(52, 152, 219, 0.15);
+        }
+
         .title {
             color: white;
             font-size: 2rem;
@@ -451,6 +576,12 @@
                 <select id="profileSelect" class="profile-select">
                     <option value="">Select Profile</option>
                 </select>
+                <div class="profile-reorder">
+                    <button id="reorderProfilesBtn" class="reorder-btn">Reorder Profiles</button>
+                    <div id="reorderList" class="reorder-list">
+                        <!-- Draggable profile list will be inserted here -->
+                    </div>
+                </div>
                 <button id="newProfileBtn" class="btn btn-secondary">New Profile</button>
                 <button id="deleteProfileBtn" class="btn btn-danger">Delete Profile</button>
                 <button id="exportBtn" class="btn btn-secondary">Export</button>
