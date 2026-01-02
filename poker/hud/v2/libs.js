@@ -138,6 +138,10 @@ class StatisticTracker {
             this.showNewProfileModal();
         });
 
+        document.getElementById('deleteProfileBtn').addEventListener('click', () => {
+            this.deleteProfile();
+        });
+
         // New profile modal
         document.getElementById('closeNewProfileModal').addEventListener('click', () => {
             this.closeNewProfileModal();
@@ -842,6 +846,52 @@ class StatisticTracker {
         this.updateProfileSelector();
         this.render();
         this.closeNewProfileModal();
+    }
+
+    deleteProfile() {
+        // Check if there's a profile selected
+        if (!this.currentProfileId || !this.profiles[this.currentProfileId]) {
+            alert('Please select a profile to delete.');
+            return;
+        }
+
+        const profileToDelete = this.profiles[this.currentProfileId];
+        const profileCount = Object.keys(this.profiles).length;
+
+        // Prevent deleting the last profile
+        if (profileCount <= 1) {
+            alert('Cannot delete the last profile. Please create another profile first.');
+            return;
+        }
+
+        // Confirm deletion
+        const confirmMessage = `Are you sure you want to delete the profile "${profileToDelete.name}"?\n\nThis action cannot be undone.`;
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+
+        // Delete the profile
+        delete this.profiles[this.currentProfileId];
+
+        // Switch to another profile (prefer default, otherwise first available)
+        const remainingProfiles = Object.keys(this.profiles);
+        if (remainingProfiles.length > 0) {
+            if (this.profiles['default']) {
+                this.currentProfileId = 'default';
+            } else {
+                this.currentProfileId = remainingProfiles[0];
+            }
+            this.saveCurrentProfileId();
+            this.config = this.loadConfig();
+        } else {
+            // This shouldn't happen due to the check above, but handle it just in case
+            this.currentProfileId = null;
+            this.config = this.getDefaultConfig();
+        }
+
+        this.saveProfiles();
+        this.updateProfileSelector();
+        this.render();
     }
 
     exportProfiles() {
