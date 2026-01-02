@@ -361,6 +361,85 @@
             background: rgba(52, 152, 219, 0.2) !important;
             transform: scale(1.05);
         }
+
+        .notes-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .notes-header:hover {
+            opacity: 0.9;
+        }
+
+        .notes-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .notes-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .notes-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        .notes-section.collapsed .notes-content {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+        }
+
+        .notes-section:not(.collapsed) .notes-content {
+            max-height: 1000px;
+            opacity: 1;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .notes-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
     </style>
 </head>
 
@@ -378,6 +457,16 @@
                 <button id="importBtn" class="btn btn-secondary">Import</button>
             </div>
             <button class="mode-toggle" id="modeToggle">Edit Mode</button>
+        </div>
+
+        <div class="notes-section" id="notesSection" style="display: none;">
+            <div class="notes-header" id="notesHeader">
+                <span>Notes</span>
+                <button class="notes-toggle" id="notesToggle">▼</button>
+            </div>
+            <div class="notes-content" id="notesContent">
+                <textarea id="notesTextarea" class="notes-textarea" placeholder="Add notes about this player..."></textarea>
+            </div>
         </div>
 
         <div class="button-groups" id="buttonGroups">

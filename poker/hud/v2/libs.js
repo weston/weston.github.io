@@ -16,12 +16,23 @@ class StatisticTracker {
         this.updateProfileSelector();
         this.render();
         this.updateModeDisplay();
+        this.renderNotes();
     }
 
     loadProfiles() {
         const saved = localStorage.getItem('manualHudV2Profiles');
         if (saved) {
             const profiles = JSON.parse(saved);
+
+            // Ensure backward compatibility: add notes and notesCollapsed fields if missing
+            Object.values(profiles).forEach(profile => {
+                if (profile.notes === undefined) {
+                    profile.notes = '';
+                }
+                if (profile.notesCollapsed === undefined) {
+                    profile.notesCollapsed = false;
+                }
+            });
 
             // Update the default profile to use the new layout if it exists
             if (profiles.default) {
@@ -36,7 +47,9 @@ class StatisticTracker {
             'default': {
                 id: 'default',
                 name: 'Default',
-                config: this.getDefaultConfig()
+                config: this.getDefaultConfig(),
+                notes: '',
+                notesCollapsed: false
             }
         };
     }
@@ -150,6 +163,16 @@ class StatisticTracker {
 
         document.getElementById('importFile').addEventListener('change', (e) => {
             this.importProfiles(e.target.files[0]);
+        });
+
+        // Notes textarea event listener
+        document.getElementById('notesTextarea').addEventListener('input', (e) => {
+            this.saveNotes(e.target.value);
+        });
+
+        // Notes toggle button
+        document.getElementById('notesHeader').addEventListener('click', () => {
+            this.toggleNotes();
         });
 
         // Modal event listeners
@@ -292,6 +315,71 @@ class StatisticTracker {
             const groupElement = this.createGroupElement(group);
             container.appendChild(groupElement);
         });
+
+        this.renderNotes();
+    }
+
+    renderNotes() {
+        const notesSection = document.getElementById('notesSection');
+        const notesTextarea = document.getElementById('notesTextarea');
+        const notesToggle = document.getElementById('notesToggle');
+        
+        if (this.currentProfileId && this.profiles[this.currentProfileId]) {
+            const profile = this.profiles[this.currentProfileId];
+            // Ensure notes field exists (backward compatibility)
+            if (profile.notes === undefined) {
+                profile.notes = '';
+            }
+            // Ensure notesCollapsed field exists (backward compatibility)
+            if (profile.notesCollapsed === undefined) {
+                profile.notesCollapsed = false;
+            }
+            notesTextarea.value = profile.notes || '';
+            notesSection.style.display = 'block';
+            
+            // Set collapsed state
+            if (profile.notesCollapsed) {
+                notesSection.classList.add('collapsed');
+                notesToggle.textContent = '▶';
+            } else {
+                notesSection.classList.remove('collapsed');
+                notesToggle.textContent = '▼';
+            }
+        } else {
+            notesSection.style.display = 'none';
+        }
+    }
+
+    toggleNotes() {
+        const notesSection = document.getElementById('notesSection');
+        const notesToggle = document.getElementById('notesToggle');
+        
+        if (this.currentProfileId && this.profiles[this.currentProfileId]) {
+            const profile = this.profiles[this.currentProfileId];
+            // Ensure notesCollapsed field exists (backward compatibility)
+            if (profile.notesCollapsed === undefined) {
+                profile.notesCollapsed = false;
+            }
+            
+            profile.notesCollapsed = !profile.notesCollapsed;
+            
+            if (profile.notesCollapsed) {
+                notesSection.classList.add('collapsed');
+                notesToggle.textContent = '▶';
+            } else {
+                notesSection.classList.remove('collapsed');
+                notesToggle.textContent = '▼';
+            }
+            
+            this.saveProfiles();
+        }
+    }
+
+    saveNotes(notes) {
+        if (this.currentProfileId && this.profiles[this.currentProfileId]) {
+            this.profiles[this.currentProfileId].notes = notes;
+            this.saveProfiles();
+        }
     }
 
     createGroupElement(group) {
@@ -682,6 +770,13 @@ class StatisticTracker {
             this.currentProfileId = profileId;
             this.saveCurrentProfileId();
             this.config = this.loadConfig();
+            // Ensure notes and notesCollapsed fields exist (backward compatibility)
+            if (this.profiles[profileId].notes === undefined) {
+                this.profiles[profileId].notes = '';
+            }
+            if (this.profiles[profileId].notesCollapsed === undefined) {
+                this.profiles[profileId].notesCollapsed = false;
+            }
             this.render();
         }
     }
@@ -734,7 +829,9 @@ class StatisticTracker {
         this.profiles[newProfileId] = {
             id: newProfileId,
             name: name,
-            config: config
+            config: config,
+            notes: '',
+            notesCollapsed: false
         };
 
         this.saveProfiles();
@@ -791,6 +888,17 @@ class StatisticTracker {
 
                 if (confirm(message)) {
                     this.profiles = importData.profiles;
+                    
+                    // Ensure backward compatibility: add notes and notesCollapsed fields if missing
+                    Object.values(this.profiles).forEach(profile => {
+                        if (profile.notes === undefined) {
+                            profile.notes = '';
+                        }
+                        if (profile.notesCollapsed === undefined) {
+                            profile.notesCollapsed = false;
+                        }
+                    });
+                    
                     this.currentProfileId = importData.currentProfileId || Object.keys(importData.profiles)[0];
 
                     this.saveProfiles();
